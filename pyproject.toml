@@ -1,0 +1,21 @@
+[project]
+name = "blockhead"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "ryandkuster", email = "ryan.kuster@gmail.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "matplotlib>=3.10.3",
+    "polars==0.20.16",
+    "seaborn>=0.13.2",
+]
+
+[project.scripts]
+blockhead = "blockhead:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
