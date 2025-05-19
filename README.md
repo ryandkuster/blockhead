@@ -6,7 +6,21 @@ Install UV for an easy experience:
 curl -LsSf https://astral.sh/uv/install.sh | sh
 ```
 
-Run the script from blockhead repo:
+Run the following from blockhead repo to make a package available on command line.
+
+```bash
+uv venv --python 3.12
+```
+
+...then:
+```bash
+pip install -e .
+```
+
+...if on macOS, try:
+```bash
+pipx install -e .
+```
 
 ```bash
 uv run python \

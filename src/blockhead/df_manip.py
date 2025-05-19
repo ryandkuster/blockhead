@@ -128,7 +128,7 @@ def write_outfile(args, og_df, df_coords, f):
             else:
                 break
 
-    print(f"writing {og_df.shape[0]} variants ({percent_count:.2%} SNPs retained)")
+    print(f"writing {og_df.shape[0]} variants ({percent_count:.2%} original vcf entries retained)")
     with open(args.outfile, "a") as o:
         og_df.write_csv(o, separator='\t')
 

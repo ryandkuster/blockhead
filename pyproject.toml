@@ -14,7 +14,7 @@ dependencies = [
 ]
 
 [project.scripts]
-blockhead = "blockhead:main"
+blockhead = "blockhead.__main__:main"
 
 [build-system]
 requires = ["hatchling"]

@@ -1,3 +1,4 @@
+# src/blockhead/__main__.py
 import gzip
 import os
 import polars as pl
@@ -7,9 +8,12 @@ import blockhead.df_manip as dm
 import blockhead.parentage as pm
 import blockhead.utils as um
 
-def main(args):
+def main():
+    args = um.parse_user_input()
+    os.environ["POLARS_MAX_THREADS"] = str(args.threads)
+
     og_df, df, df_coords = dm.read_vcf(args)
-    
+
     parent_dt, cross_ls, named_f1_dt = pm.get_parentage(args)
     f1_ls, adv_ls = adv_f1_dt = pm.get_advanced(named_f1_dt)
 
@@ -48,6 +52,4 @@ def main(args):
 
 
 if __name__ == "__main__":
-    args = um.parse_user_input()
-    os.environ["POLARS_MAX_THREADS"] = str(args.threads)
-    main(args)
+    main()
