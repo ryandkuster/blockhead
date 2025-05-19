@@ -17,12 +17,6 @@ def main():
     parent_dt, cross_ls, named_f1_dt = pm.get_parentage(args)
     f1_ls, adv_ls = adv_f1_dt = pm.get_advanced(named_f1_dt)
 
-    # print(parent_dt)
-    # print(named_f1_dt)
-    # print(cross_ls)
-    # print(f1_ls)
-    # print(adv_ls)
-
     sample_ls = pm.get_sample_ls(named_f1_dt)
     df = dm.recode_vcf(df, sample_ls)
     df = dm.recode_missing(sample_ls, df)

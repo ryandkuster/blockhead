@@ -17,10 +17,6 @@ def read_vcf(args) -> pl.DataFrame:
     Save the df_coords for writing final output file.
     """
     print("opening vcf")
-    # df = pl.scan_csv(args.vcf,
-    #                  separator="\t",
-    #                  comment_prefix="##")
-    # df = df.collect()
     og_df = pl.read_csv(args.vcf,
                      separator="\t",
                      comment_prefix="##")
@@ -56,16 +52,6 @@ def recode_missing(sample_ls, df):
     df = df.with_columns(
         pl.col(sample_ls).fill_null("..")
     )
-    #for idx, sample in enumerate(sample_ls):
-    #    if idx == 0:
-    #        print("recoding missing variants")
-
-    #    df = df.with_columns(
-    #        pl.when(df[sample] > 2)
-    #        .then(pl.lit(".."))
-    #        .otherwise(pl.col(sample))
-    #        .alias(sample)
-    #    )
     return df
 
 
@@ -112,10 +98,6 @@ def write_outfile(args, og_df, df_coords, f):
     MIER correct variants present.
     """
 
-    # print("opening vcf")
-    # og_df = pl.read_csv(args.vcf,
-    #                  separator="\t",
-    #                  comment_prefix="##")
     original_count = og_df.shape[0]
     og_df = og_df.join(df_coords, on=["#CHROM", "POS"], how="semi")
     percent_count = og_df.shape[0]/original_count
@@ -218,7 +200,7 @@ def haplotype_per_cross(adv_ls, named_f1_dt, df):
                 pl.col("parent_origin").cast(pl.Categorical).to_physical().alias("parent_cats")
             )
 
-            # attempt a plot
+            # Create a plot.
             x = tmp_df["POS"].to_list()
             y = tmp_df["parent_origin"].to_list()
             colors = ['orange' if label == "P_Wilking" else 'green' for label in y]

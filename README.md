@@ -22,15 +22,21 @@ pip install -e .
 pipx install -e .
 ```
 
+## Usage
+
 ```bash
-uv run python \
-    -m blockhead \
+blockhead \
     -v tests/data/adv_test_1.vcf \
     -p tests/data/adv_test_1_parentage.tsv \
     -r tests/data/adv_test_1_mier.tsv \
     -o tests/data/adv_test_1_mier.vcf.gz \
     -x 1 \
     -t 12
+```
+
+For more help, use:
+```bash
+blockhead --help
 ```
 
 ```
