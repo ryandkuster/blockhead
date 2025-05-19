@@ -21,16 +21,15 @@ def read_vcf(args) -> pl.DataFrame:
     #                  separator="\t",
     #                  comment_prefix="##")
     # df = df.collect()
-    df = pl.read_csv(args.vcf,
+    og_df = pl.read_csv(args.vcf,
                      separator="\t",
                      comment_prefix="##")
-    print(f"{df.shape[0]} variants found")
-    df = df.filter((pl.col("REF").str.len_chars() == 1) & (pl.col("ALT").str.len_chars() == 1))
+    print(f"{og_df.shape[0]} variants found")
+    df = og_df.filter((pl.col("REF").str.len_chars() == 1) & (pl.col("ALT").str.len_chars() == 1))
     print(f"{df.shape[0]} biallelic SNPs found")
     df_coords = df.select(["#CHROM", "POS"])
-    # df_coords = df.select(df.columns[:9])
     df = df.select(df.columns[9:])
-    return df, df_coords
+    return og_df, df, df_coords
 
 
 
@@ -54,16 +53,19 @@ def recode_missing(sample_ls, df):
     """
     If multiallelic sites present, recode as ".." unknown
     """
-    for idx, sample in enumerate(sample_ls):
-        if idx == 0:
-            print("recoding missing variants")
+    df = df.with_columns(
+        pl.col(sample_ls).fill_null("..")
+    )
+    #for idx, sample in enumerate(sample_ls):
+    #    if idx == 0:
+    #        print("recoding missing variants")
 
-        df = df.with_columns(
-            pl.when(df[sample].str.len_chars() > 1)
-            .then(pl.lit(".."))
-            .otherwise(pl.col(sample))
-            .alias(sample)
-        )
+    #    df = df.with_columns(
+    #        pl.when(df[sample] > 2)
+    #        .then(pl.lit(".."))
+    #        .otherwise(pl.col(sample))
+    #        .alias(sample)
+    #    )
     return df
 
 
@@ -104,30 +106,31 @@ def stitch_coords(df, df_coords):
     return df
 
 
-def write_outfile(args, df_coords, f):
+def write_outfile(args, og_df, df_coords, f):
     """
     Write a vcf of the input vcf file coords with only the relevant
     MIER correct variants present.
     """
-    chrom_dt = {}
-    chrom_ls = sorted(df_coords["#CHROM"].unique().to_list())
 
-    for chrom in chrom_ls:
-        chrom_df = df_coords.filter(
-            (df_coords["#CHROM"] == chrom)
-        )
-        pos_ls = chrom_df["POS"].to_list()
-        chrom_dt[chrom] = pos_ls
-    print(chrom_dt)
+    # print("opening vcf")
+    # og_df = pl.read_csv(args.vcf,
+    #                  separator="\t",
+    #                  comment_prefix="##")
+    original_count = og_df.shape[0]
+    og_df = og_df.join(df_coords, on=["#CHROM", "POS"], how="semi")
+    percent_count = og_df.shape[0]/original_count
 
-    with gzip.open(args.outfile, "wt") as o:
+    print("writing header")
+    with open(args.outfile, "w") as o:
         for line in f:
-            if line.startswith("#"):
+            if line.startswith("##"):
                 o.write(line)
             else:
-                fields = line.split()
-                if int(fields[1]) in chrom_dt[fields[0]]:
-                    o.write(f"{'\t'.join(fields)}\n")
+                break
+
+    print(f"writing {og_df.shape[0]} variants ({percent_count:.2%} SNPs retained)")
+    with open(args.outfile, "a") as o:
+        og_df.write_csv(o, separator='\t')
 
 
 def haplotype_per_cross(adv_ls, named_f1_dt, df):

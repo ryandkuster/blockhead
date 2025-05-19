@@ -8,20 +8,20 @@ import blockhead.parentage as pm
 import blockhead.utils as um
 
 def main(args):
-    df, df_coords = dm.read_vcf(args)
+    og_df, df, df_coords = dm.read_vcf(args)
     
     parent_dt, cross_ls, named_f1_dt = pm.get_parentage(args)
     f1_ls, adv_ls = adv_f1_dt = pm.get_advanced(named_f1_dt)
 
-    print(parent_dt)
-    print(named_f1_dt)
-    print(cross_ls)
-    print(f1_ls)
-    print(adv_ls)
+    # print(parent_dt)
+    # print(named_f1_dt)
+    # print(cross_ls)
+    # print(f1_ls)
+    # print(adv_ls)
 
     sample_ls = pm.get_sample_ls(named_f1_dt)
     df = dm.recode_vcf(df, sample_ls)
-    # df = dm.recode_missing(sample_ls, df)
+    df = dm.recode_missing(sample_ls, df)
     df, mier_ls = dm.parental_trios(args, sample_ls, df, named_f1_dt)
     df = df.with_columns(
         (
@@ -37,10 +37,10 @@ def main(args):
         compressed = um.gzip_test(args.vcf)
         if compressed:
             with gzip.open(args.vcf, "rt", encoding='utf-8') as f:
-                dm.write_outfile(args, df_coords, f)
+                dm.write_outfile(args, og_df, df_coords, f)
         else:
             with open(args.vcf) as f:
-                dm.write_outfile(args, df_coords, f)
+                dm.write_outfile(args, og_df, df_coords, f)
 
     if args.blockmode and len(adv_ls) > 0:
         print("determining parentage haplotypes for advance hybrids")
