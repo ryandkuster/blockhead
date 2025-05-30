@@ -39,17 +39,17 @@ def get_sample_ls(named_f1_dt: dict):
 
 def get_advanced(named_f1_dt):
     """
-    Find the F1s based on parental tsv input.
+    Find the advanced hybrids based on parental tsv input.
     """
-    f1_ls = []
     adv_ls = []
 
     for k, v in named_f1_dt.items():
         for vi in v:
             if vi in named_f1_dt.keys():
-                f1_ls.append(vi)
                 adv_ls.append(k)
-    return list(set(f1_ls)), list(set(adv_ls))
+    adv_ls = list(set(adv_ls))
+    adv_ls.sort()
+    return adv_ls
 
 
 def get_advanced_lineage(adv, named_f1_dt):

@@ -8,7 +8,7 @@ import seaborn as sns
 
 from blockhead.parentage import get_advanced_lineage
 
-pl.Config.set_tbl_cols(-1)
+# pl.Config.set_tbl_cols(-1)
 
 def read_vcf(args) -> pl.DataFrame:
     """
@@ -174,11 +174,11 @@ def haplotype_per_cross(adv_ls, named_f1_dt, df):
             2   2   2
             """
             tmp_df = tmp_df.with_columns(
-                pl.when((tmp_df[lin_dt["adv"]] == 0) & (tmp_df[lin_dt["p3"]] == 0)).then(0)
-                  .when((tmp_df[lin_dt["adv"]] == 1) & (tmp_df[lin_dt["p3"]] == 0)).then(2)
-                  .when((tmp_df[lin_dt["adv"]] == 1) & (tmp_df[lin_dt["p3"]] == 2)).then(0)
-                  .when((tmp_df[lin_dt["adv"]] == 2) & (tmp_df[lin_dt["p3"]] == 2)).then(2)
-                  .otherwise(99)
+                pl.when((tmp_df[lin_dt["adv"]] == "0") & (tmp_df[lin_dt["p3"]] == "0")).then(pl.lit("0"))
+                  .when((tmp_df[lin_dt["adv"]] == "1") & (tmp_df[lin_dt["p3"]] == "0")).then(pl.lit("2"))
+                  .when((tmp_df[lin_dt["adv"]] == "1") & (tmp_df[lin_dt["p3"]] == "2")).then(pl.lit("0"))
+                  .when((tmp_df[lin_dt["adv"]] == "2") & (tmp_df[lin_dt["p3"]] == "2")).then(pl.lit("2"))
+                  .otherwise(pl.lit("99"))
                   .alias("parent_type")
             )
 

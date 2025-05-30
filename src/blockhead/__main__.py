@@ -11,14 +11,13 @@ import blockhead.utils as um
 def main():
     args = um.parse_user_input()
     os.environ["POLARS_MAX_THREADS"] = str(args.threads)
-
     og_df, df, df_coords = dm.read_vcf(args)
-
     parent_dt, cross_ls, named_f1_dt = pm.get_parentage(args)
-    f1_ls, adv_ls = adv_f1_dt = pm.get_advanced(named_f1_dt)
+    adv_ls = pm.get_advanced(named_f1_dt)
     sample_ls = pm.get_sample_ls(named_f1_dt)
     df = dm.recode_vcf(df, sample_ls)
     df = dm.recode_missing(sample_ls, df)
+
     df, mier_ls = dm.parental_trios(args, sample_ls, df, named_f1_dt)
     df = df.with_columns(
         (
