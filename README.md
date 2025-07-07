@@ -6,7 +6,7 @@ Install UV for an easy experience:
 curl -LsSf https://astral.sh/uv/install.sh | sh
 ```
 
-Run the following from blockhead repo to make a package available on command line.
+Run the following while in the blockhead repo to make a package available on command line.
 
 ```bash
 uv venv --python 3.12
@@ -40,19 +40,21 @@ blockhead --help
 ```
 
 ```
+usage: blockhead [-h] -p PARENTAGE -v VCF -d OUTDIR [-o] [-t THREADS] [-x THRESHOLD] [-b]
+                 [-c COLORS]
+
 options:
   -h, --help            show this help message and exit
-  -p PARENTAGE, --parentage PARENTAGE
+  -p, --parentage PARENTAGE
                         tsv parentage file
-  -v VCF, --vcf VCF     biallelic only vcf file
-  -r RESULTS, --results RESULTS
-                        tsv summary output file
-  -o OUTFILE, --outfile OUTFILE
-                        tsv file per variant
-  -t THREADS, --threads THREADS
+  -v, --vcf VCF         biallelic only SNP input vcf file
+  -d, --outdir OUTDIR   output directory for all files
+  -o, --outvcf          vcf file of -x filtered variants
+  -t, --threads THREADS
                         max polars threads
-  -x THRESHOLD, --threshold THRESHOLD
-                        threshold for MIER trios to keep variant
+  -x, --threshold THRESHOLD
+                        percent of children in trios with correct calls to keep variant
   -b, --blockmode       perform haplotype block functionality
+  -c, --colors COLORS   optional colors file for haplotype blocks
 ```
 

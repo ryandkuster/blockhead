@@ -1,4 +1,0 @@
-f1	correct	incorrect	unknown	correct_known	correct_total
-a_b	10	1	3	0.909	0.714
-a_c	10	2	2	0.833	0.714
-b_c	11	1	2	0.917	0.786

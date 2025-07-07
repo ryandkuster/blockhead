@@ -9,22 +9,25 @@ def parse_user_input():
                         help='tsv parentage file')
 
     parser.add_argument('-v', '--vcf', type=str, required=True,
-                        help='biallelic only vcf file')
+                        help='biallelic only SNP input vcf file')
 
-    parser.add_argument('-r', '--results', type=str, required=True,
-                        help='tsv summary output file')
+    parser.add_argument('-d', '--outdir', type=str, required=True,
+                        help='output directory for all files')
 
-    parser.add_argument('-o', '--outfile', type=str, required=False,
-                        default=False, help='tsv file per variant')
+    parser.add_argument('-o', '--outvcf', action='store_true',
+                        help='vcf file of -x filtered variants')
 
     parser.add_argument('-t', '--threads', type=int, required=False,
                         default=1, help='max polars threads')
 
     parser.add_argument('-x', '--threshold', type=float, required=False,
-                        default=.8, help='threshold for MIER trios to keep variant')
+                        default=.8, help='percent of children in trios with correct calls to keep variant')
 
     parser.add_argument('-b', '--blockmode', action='store_true',
                         help='perform haplotype block functionality')
+
+    parser.add_argument('-c', '--colors', type=str, required=False,
+                        help='optional colors file for haplotype blocks')
 
     args = parser.parse_args()
 

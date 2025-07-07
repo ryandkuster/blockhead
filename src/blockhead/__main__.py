@@ -28,7 +28,7 @@ def main():
     df = dm.stitch_coords(df, df_coords)
     df = df.filter(df["percent_mier_correct"] >= args.threshold)
 
-    if args.outfile:
+    if args.outvcf:
         df_coords = df.select(["#CHROM", "POS"])
         compressed = um.gzip_test(args.vcf)
         if compressed:
@@ -40,7 +40,7 @@ def main():
 
     if args.blockmode and len(adv_ls) > 0:
         print("determining parentage haplotypes for advance hybrids")
-        dm.haplotype_per_cross(adv_ls, named_f1_dt, df)
+        dm.haplotype_per_cross(args, adv_ls, named_f1_dt, df)
 
 
 if __name__ == "__main__":

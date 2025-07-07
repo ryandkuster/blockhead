@@ -63,7 +63,7 @@ def parental_trios(args, sample_ls, df, named_f1_dt):
     print("analyzing parental trios")
     mier_ls = []
     
-    with open(args.results, "w") as o:
+    with open(os.path.join(args.outdir,"MIER_summary.tsv"), "w") as o:
         o.write(f"f1\tcorrect\tincorrect\tunknown\tcorrect_known\tcorrect_total\n")
         for f1, (p1, p2) in named_f1_dt.items():
             new_col = f"MIER_{f1}"
@@ -95,12 +95,13 @@ def stitch_coords(df, df_coords):
 def write_outfile(args, og_df, df_coords, f):
     """
     Write a vcf of the input vcf file coords with only the relevant
-    MIER correct variants present.
+    MIER correct variants present based on filtering threshold.
     """
 
     original_count = og_df.shape[0]
     og_df = og_df.join(df_coords, on=["#CHROM", "POS"], how="semi")
     percent_count = og_df.shape[0]/original_count
+    args.outfile = os.path.join(args.outdir, "MIER_filtered.vcf")
 
     print("writing header")
     with open(args.outfile, "w") as o:
@@ -115,7 +116,7 @@ def write_outfile(args, og_df, df_coords, f):
         og_df.write_csv(o, separator='\t')
 
 
-def haplotype_per_cross(adv_ls, named_f1_dt, df):
+def haplotype_per_cross(args, adv_ls, named_f1_dt, df):
     """
     Iterate one scaffold at a time to see the calls that likely were
     contributed by each original parental cross (p1/p2).
@@ -125,8 +126,10 @@ def haplotype_per_cross(adv_ls, named_f1_dt, df):
     - [x] filter to p3 homozygous
     """
 
-    alpha_val = 0.01
+    # alpha_val = 0.01
+    alpha_val = 0.5
     chrom_ls = sorted(df["#CHROM"].unique().to_list())
+    colors_dt = haplotype_colors(args)
 
     for chrom in chrom_ls:
 
@@ -135,12 +138,15 @@ def haplotype_per_cross(adv_ls, named_f1_dt, df):
         chrom_df = df.filter(
             (df["#CHROM"] == chrom)
         )
+        img_path = os.path.join(args.outdir, f"{chrom}_{len(adv_ls)}_haplotypes.png")
+        #fig, axes = plt.subplots(nrows=len(adv_ls), sharex=True, figsize=(30, len(adv_ls)/3), gridspec_kw={'hspace': 0.3})
+        fig, axes = plt.subplots(nrows=len(adv_ls), ncols=3, sharex=True, figsize=(32, len(adv_ls)/3), gridspec_kw={'hspace': 0.3, 'width_ratios': [90, 1, 1], 'wspace': 0.03})
 
-        fig, axes = plt.subplots(nrows=len(adv_ls), sharex=True, figsize=(30, len(adv_ls)/3), gridspec_kw={'hspace': 0.3})
 
         for idx, adv in enumerate(adv_ls):
             print(f"processing advanced hybrid : {adv}")
             lin_dt = get_advanced_lineage(adv, named_f1_dt)
+            print(lin_dt)
 
             # filter to p1/p2 0/2 or 2/0
             tmp_df = chrom_df.filter(
@@ -203,12 +209,47 @@ def haplotype_per_cross(adv_ls, named_f1_dt, df):
             # Create a plot.
             x = tmp_df["POS"].to_list()
             y = tmp_df["parent_origin"].to_list()
-            colors = ['orange' if label == "P_Wilking" else 'green' for label in y]
+            colors = [colors_dt[id] for id in y]
             y = [0 for i in y]
-            axes[idx].scatter(x, y, s=500, marker="|", c=colors, edgecolor="none", alpha=alpha_val)
-            axes[idx].set_yticks([])
-            axes[idx].set_ylabel(f"{adv}", labelpad=40, loc="center", rotation=0)
-        plt.savefig(f"{chrom}_{len(adv_ls)}_advanced_hybrid_haplotypes.png")
-        sys.exit()
+            # axes[idx].set_ylabel(f"{adv}", labelpad=40, loc="center", rotation=0)
+            axes[idx, 0].scatter(x, y, s=500, marker="|", c=colors, edgecolor="none", alpha=alpha_val)
+            axes[idx, 0].set_yticks([])
+            # axes[idx, 0].set_ylabel(f"{adv}", labelpad=50, loc="center", rotation=0)
+            axes[idx, 0].set_ylabel(f"{adv}", labelpad=100, va="center", ha="left", rotation=0)
+
+            axes[idx, 1].set_facecolor(colors_dt[lin_dt["f1"]])
+            axes[idx, 2].set_facecolor(colors_dt[lin_dt["p3"]])
+
+        # remove ticks and labels for the f1/p3 labels 
+        for idx, i in enumerate(adv_ls):
+            axes[idx, 1].set_yticklabels([])
+            axes[idx, 1].set_yticks([])
+            axes[idx, 1].set_xticklabels([])
+            axes[idx, 1].set_xticks([])
+            axes[idx, 2].set_yticklabels([])
+            axes[idx, 2].set_yticks([])
+            axes[idx, 2].set_xticklabels([])
+            axes[idx, 2].set_xticks([])
+
+        # remove the whitespace on the x axis that matplotlib defaults to
+        for ax in axes:
+            ax[0].autoscale(enable=True, axis='x', tight=True)
+
+        axes[0, 0].set_title(f"{chrom}", pad=20)
+        axes[0, 1].set_title("F1", pad=20)
+        axes[0, 2].set_title("P3", pad=20)
+
+        print(f"saving image to {img_path}")
+        plt.savefig(img_path)
 
     return tmp_df
+
+
+def haplotype_colors(args):
+    if args.colors:
+        colors_df = pl.read_csv(args.colors, separator="\t", has_header=False, new_columns=["id", "color"])
+        colors_dt = dict(zip(colors_df["id"], colors_df["color"]))
+    else:
+        colors_dt = {}
+
+    return colors_dt
