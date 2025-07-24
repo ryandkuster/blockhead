@@ -66,6 +66,7 @@ def parental_trios(args, sample_ls, df, named_f1_dt):
     with open(os.path.join(args.outdir,"MIER_summary.tsv"), "w") as o:
         o.write(f"f1\tcorrect\tincorrect\tunknown\tcorrect_known\tcorrect_total\n")
         for f1, (p1, p2) in named_f1_dt.items():
+            print(f"{f1} {p1} {p2}")
             new_col = f"MIER_{f1}"
             mier_ls.append(new_col)
             sample_ls.append(new_col)
@@ -85,6 +86,39 @@ def parental_trios(args, sample_ls, df, named_f1_dt):
             o.write(f"{f1}\t{correct}\t{incorrect}\t{unknown}\t{(correct/(correct+incorrect)):.3f}\t{(correct/(correct+incorrect+unknown)):.3f}\n")
 
     return df, mier_ls
+
+
+def homozygous_parents(args, sample_ls, df, named_f1_dt, mier_ls):
+    """
+    Create new MIER column per-sample that is 1 (pass), 2 (fail), or 3
+    (unknown).
+    """
+    print("analyzing parental trios with homozygous founder calls")
+
+    with open(os.path.join(args.outdir,"MIER_summary_homozygous_parents.tsv"), "w") as o:
+        o.write(f"f1\tcorrect\tincorrect\tunknown\tcorrect_known\tcorrect_total\n")
+        for f1, (p1, p2) in named_f1_dt.items():
+            print(f"{f1} {p1} {p2}")
+            new_col = f"MIER_{f1}"
+
+            df_hom = df.filter(
+                ((pl.col(p1) == "0") & (pl.col(p2) == "2")) |
+                ((pl.col(p2) == "0") & (pl.col(p1) == "2"))
+            )
+
+            df_hom = df_hom.with_columns(
+                pl.when((df_hom[f1].str.contains(r"\.")) | (df_hom[p1].str.contains(r"\.")) | (df_hom[p2].str.contains(r"\."))).then(3)
+                .when((df_hom[f1] == "0") & (df_hom[p1] != "2") & (df_hom[p2] != "2")).then(1)
+                .when((df_hom[f1] == "1") & ~((df_hom[p1] == "0") & (df_hom[p2] == "0")) & ~((df_hom[p1] == "2") & (df_hom[p2] == "2"))).then(1)
+                .when((df_hom[f1] == "2") & (df_hom[p1] != "0") & (df_hom[p2] != "0")).then(1)
+                .otherwise(2)
+                .alias(new_col)
+            )
+            correct = df_hom.filter(pl.col(new_col) == 1).height
+            incorrect = df_hom.filter(pl.col(new_col) == 2).height
+            unknown = df_hom.filter(pl.col(new_col) == 3).height
+
+            o.write(f"{f1}\t{correct}\t{incorrect}\t{unknown}\t{(correct/(correct+incorrect)):.3f}\t{(correct/(correct+incorrect+unknown)):.3f}\n")
 
 
 def stitch_coords(df, df_coords):

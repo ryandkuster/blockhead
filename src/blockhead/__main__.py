@@ -18,7 +18,11 @@ def main():
     df = dm.recode_vcf(df, sample_ls)
     df = dm.recode_missing(sample_ls, df)
 
+    print(named_f1_dt)
+
     df, mier_ls = dm.parental_trios(args, sample_ls, df, named_f1_dt)
+    dm.homozygous_parents(args, sample_ls, df, named_f1_dt, mier_ls)
+
     df = df.with_columns(
         (
             pl.sum_horizontal([pl.col(c) == 1 for c in mier_ls])
