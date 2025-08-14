@@ -1,0 +1,4 @@
+f1	correct	incorrect	unknown	correct_known	correct_total
+a_b	59524	5972	531	0.909	0.902
+ab_c1	2892	2604	211	0.526	0.507
+ab_c2	2896	2716	95	0.516	0.507

@@ -11,17 +11,32 @@ import blockhead.utils as um
 def main():
     args = um.parse_user_input()
     os.environ["POLARS_MAX_THREADS"] = str(args.threads)
-    og_df, df, df_coords = dm.read_vcf(args)
+    og_df, df, df_coords, format_fields = dm.read_vcf(args)
     parent_dt, cross_ls, named_f1_dt = pm.get_parentage(args)
     adv_ls = pm.get_advanced(named_f1_dt)
     sample_ls = pm.get_sample_ls(named_f1_dt)
+
+    if args.deep_dive:
+        dm.deep_dive(args, format_fields, df, named_f1_dt)
+
     df = dm.recode_vcf(df, sample_ls)
     df = dm.recode_missing(sample_ls, df)
 
-    print(named_f1_dt)
+    if args.wrong_calls:
+        df, mier_ls = dm.wrongo_bongo(args, df_coords, df, named_f1_dt)
+        dm.plot_wrong_calls(args, mier_ls, df, [-9999], "ALL")
+        dm.plot_wrong_calls(args, mier_ls, df, [5, 13], "HOM_REF")
+        dm.plot_wrong_calls(args, mier_ls, df, [2, 10], "HOM_ALT")
+        dm.plot_wrong_calls(args, mier_ls, df, [0, 1], "HET")
+        dm.plot_wrong_calls(args, mier_ls, df, [10, 13], "BOTH_ALLELES")
+        dm.plot_wrong_calls(args, mier_ls, df, [1, 5, 13], "REF_BIASED")
+        sys.exit()
 
+    # perform analysis on all parental calls
     df, mier_ls = dm.parental_trios(args, sample_ls, df, named_f1_dt)
-    dm.homozygous_parents(args, sample_ls, df, named_f1_dt, mier_ls)
+
+    # perform analysis on homozygous parental calls only
+    dm.homozygous_parents(args, df, named_f1_dt)
 
     df = df.with_columns(
         (

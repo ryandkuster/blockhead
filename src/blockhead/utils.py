@@ -20,11 +20,17 @@ def parse_user_input():
     parser.add_argument('-t', '--threads', type=int, required=False,
                         default=1, help='max polars threads')
 
+    parser.add_argument('-z', '--deep_dive', action='store_true',
+                        help='perform analysis on homozygous parent calls only')
+
     parser.add_argument('-x', '--threshold', type=float, required=False,
-                        default=.8, help='percent of children in trios with correct calls to keep variant')
+                        default=.8, help='proportion of children in trios with correct calls to keep variant (max 1)')
 
     parser.add_argument('-b', '--blockmode', action='store_true',
                         help='perform haplotype block functionality')
+
+    parser.add_argument('-w', '--wrong_calls', action='store_true',
+                        help='assess wrong calls only')
 
     parser.add_argument('-c', '--colors', type=str, required=False,
                         help='optional colors file for haplotype blocks')
