@@ -23,13 +23,12 @@ def main():
     df = dm.recode_missing(sample_ls, df)
 
     if args.wrong_calls:
-        df, mier_ls = dm.wrongo_bongo(args, df_coords, df, named_f1_dt)
-        dm.plot_wrong_calls(args, mier_ls, df, [-9999], "ALL")
-        dm.plot_wrong_calls(args, mier_ls, df, [5, 13], "HOM_REF")
-        dm.plot_wrong_calls(args, mier_ls, df, [2, 10], "HOM_ALT")
-        dm.plot_wrong_calls(args, mier_ls, df, [0, 1], "HET")
-        dm.plot_wrong_calls(args, mier_ls, df, [10, 13], "BOTH_ALLELES")
-        dm.plot_wrong_calls(args, mier_ls, df, [1, 5, 13], "REF_BIASED")
+        df, mier_ls, bitwise_dt = dm.wrongo_bongo(args, df_coords, df, named_f1_dt)
+        # dm.plot_wrong_calls(args, mier_ls, df, [0b00000], "ALL")
+        # dm.plot_wrong_calls(args, mier_ls, df, [0b00100], "HOM_REF")
+        # dm.plot_wrong_calls(args, mier_ls, df, [0b01000], "HOM_ALT")
+        # dm.plot_wrong_calls(args, mier_ls, df, [0b10000], "HET")
+        dm.plot_wrong_blocks(args, mier_ls, df, bitwise_dt)
         sys.exit()
 
     # perform analysis on all parental calls
