@@ -47,13 +47,15 @@ def main():
             axes[idx].plot(chrom_df2["start"], chrom_df2[feature], c=val[1], linewidth=2, linestyle='dotted')
             axes[idx].fill_between(chrom_df1["start"], chrom_df1[feature], chrom_df2[feature], alpha=0.1, color="gray")
             axes[idx].set_ylabel(f"{val[0]}", labelpad=150, va="center", ha="left", rotation=0, fontsize=14)
+            axes[idx].margins(x=0.01, y=0.08)
+            axes[idx].yaxis.set_major_formatter(plt.FuncFormatter(lambda x, p: f'{x:.2f}'))
 
-        axes[0].set_title(f"{chrom1}", pad=20, fontsize=16)
         max_pos = chrom_df1.select(pl.col("start").max()).item()
         x_ticks = [i for i in range(0, max_pos, 5000000)]
         tick_labels = [f'{x/1e6:.0f}Mb' if x != 0 else '0' for x in x_ticks]
         axes[0].set_xticks(x_ticks)
         axes[0].set_xticklabels(tick_labels)
+        axes[0].set_title(f"{chrom1}", pad=20, fontsize=16)
 
         graph = mlines.Line2D([], [], color='black', linestyle='dotted', label='graph reference')
         linear = mlines.Line2D([], [], color='black', linestyle='solid', label='linear reference')
@@ -68,7 +70,7 @@ def main():
             handles=[graph, linear],
             fontsize=14
         )
-        # plt.legend(handles=[graph, linear])
+        plt.tight_layout()
         plt.savefig(img_path)
 
 

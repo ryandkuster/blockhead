@@ -7,6 +7,9 @@ import sys
 import blockhead.df_manip as dm
 import blockhead.parentage as pm
 import blockhead.utils as um
+import blockhead.wrong_calls as wc
+import blockhead.deep_diving as dd
+
 
 def main():
     args = um.parse_user_input()
@@ -17,18 +20,14 @@ def main():
     sample_ls = pm.get_sample_ls(named_f1_dt)
 
     if args.deep_dive:
-        dm.deep_dive(args, format_fields, df, named_f1_dt)
+        dd.deep_dive(args, format_fields, df, named_f1_dt)
 
     df = dm.recode_vcf(df, sample_ls)
     df = dm.recode_missing(sample_ls, df)
 
     if args.wrong_calls:
-        df, mier_ls, bitwise_dt = dm.wrongo_bongo(args, df_coords, df, named_f1_dt)
-        # dm.plot_wrong_calls(args, mier_ls, df, [0b00000], "ALL")
-        # dm.plot_wrong_calls(args, mier_ls, df, [0b00100], "HOM_REF")
-        # dm.plot_wrong_calls(args, mier_ls, df, [0b01000], "HOM_ALT")
-        # dm.plot_wrong_calls(args, mier_ls, df, [0b10000], "HET")
-        dm.plot_wrong_blocks(args, mier_ls, df, bitwise_dt)
+        df, mier_ls, bitwise_dt = wc.wrongo_bongo(args, df_coords, df, named_f1_dt)
+        wc.plot_wrong_blocks(args, mier_ls, df, bitwise_dt)
         sys.exit()
 
     # perform analysis on all parental calls
