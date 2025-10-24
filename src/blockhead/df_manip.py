@@ -1,5 +1,7 @@
 import gzip
 import os
+import random
+import statistics
 import sys
 
 import matplotlib.pyplot as plt
@@ -161,7 +163,6 @@ def haplotype_per_cross(args, adv_ls, named_f1_dt, df):
     - [x] filter to p3 homozygous
     """
 
-    # alpha_val = 0.01
     alpha_val = 0.5
     chrom_ls = sorted(df["#CHROM"].unique().to_list())
     colors_dt = haplotype_colors(args)
@@ -176,6 +177,9 @@ def haplotype_per_cross(args, adv_ls, named_f1_dt, df):
         img_path = os.path.join(args.outdir, f"{chrom}_{len(adv_ls)}_haplotypes.png")
         fig, axes = plt.subplots(nrows=len(adv_ls), ncols=3, sharex=True, figsize=(32, len(adv_ls)/3), gridspec_kw={'hspace': 0.3, 'width_ratios': [90, 1, 1], 'wspace': 0.03})
 
+        max_pos = chrom_df.select(pl.col("POS").max()).item()
+        x_ticks = [i for i in range(0, max_pos, 5000000)]
+        tick_labels = [f'{x/1e6:.0f}Mb' if x != 0 else '0' for x in x_ticks]
 
         for idx, adv in enumerate(adv_ls):
             print(f"processing advanced hybrid : {adv}")
@@ -188,12 +192,12 @@ def haplotype_per_cross(args, adv_ls, named_f1_dt, df):
                 ((chrom_df[lin_dt["p1"]] == "2") & (chrom_df[lin_dt["p2"]] == "0"))
             )
 
-            # filter to f1 MIER correct
+            # filter to f1 MIER correct (note, 1 here is not genotype)
             tmp_df = tmp_df.filter(
                 (tmp_df[f"MIER_{lin_dt["f1"]}"] == "1")
             )
 
-            # filter to f1 MIER correct
+            # filter to adv MIER correct (note, 1 here is not genotype)
             tmp_df = tmp_df.filter(
                 (tmp_df[f"MIER_{lin_dt["adv"]}"] == "1")
             )
@@ -233,7 +237,12 @@ def haplotype_per_cross(args, adv_ls, named_f1_dt, df):
                   .alias("parent_origin")
             )
 
-            keep_cols = ["POS", "parent_origin"] + [v for k,v in lin_dt.items()]
+            keep_cols = ["POS", "parent_origin"] + [v for k, v in lin_dt.items()]
+
+            #TODO Experimental
+            #smooth_ls = [int(i) for i in tmp_df["parent_type"].to_list()]
+            #TODO Experimental
+
             tmp_df = tmp_df.select(keep_cols)
 
             tmp_df = tmp_df.with_columns(
@@ -245,12 +254,16 @@ def haplotype_per_cross(args, adv_ls, named_f1_dt, df):
             y = tmp_df["parent_origin"].to_list()
             colors = [colors_dt[id] for id in y]
             y = [0 for i in y]
-            # axes[idx].set_ylabel(f"{adv}", labelpad=40, loc="center", rotation=0)
+
+            #TODO Experimental
+            #colors = median_filter(smooth_ls, 15000)
+            #df = pl.DataFrame({"s": smooth_ls, "x": x})
+            #colors = median_filter_new(df, 50000, smooth_ls)
+            #TODO Experimental
+
             axes[idx, 0].scatter(x, y, s=500, marker="|", c=colors, edgecolor="none", alpha=alpha_val)
             axes[idx, 0].set_yticks([])
-            # axes[idx, 0].set_ylabel(f"{adv}", labelpad=50, loc="center", rotation=0)
             axes[idx, 0].set_ylabel(f"{adv}", labelpad=100, va="center", ha="left", rotation=0)
-
             axes[idx, 1].set_facecolor(colors_dt[lin_dt["f1"]])
             axes[idx, 2].set_facecolor(colors_dt[lin_dt["p3"]])
 
@@ -265,6 +278,10 @@ def haplotype_per_cross(args, adv_ls, named_f1_dt, df):
             axes[idx, 2].set_xticklabels([])
             axes[idx, 2].set_xticks([])
 
+		# add x axis tick labels
+        #axes[0].set_xticks(x_ticks)
+        #axes[0].set_xticklabels(tick_labels)
+
         # remove the whitespace on the x axis that matplotlib defaults to
         for ax in axes:
             ax[0].autoscale(enable=True, axis='x', tight=True)
@@ -274,6 +291,7 @@ def haplotype_per_cross(args, adv_ls, named_f1_dt, df):
         axes[0, 2].set_title("P3", pad=20)
 
         print(f"saving image to {img_path}")
+        plt.tight_layout()
         plt.savefig(img_path)
 
     return tmp_df
@@ -287,3 +305,66 @@ def haplotype_colors(args):
         colors_dt = {}
 
     return colors_dt
+
+
+def median_filter(s, r):
+    s_len = len(s)
+    s_new = [i for i in s]
+
+    for idx, i in enumerate(s):
+        if idx < r:
+            begin = 0
+            end = 2*idx + 1
+        elif idx + r >= s_len:
+            begin = idx - (s_len - idx) + 1
+            end = s_len
+        else:
+            begin = idx - r
+            end = idx + r + 1
+
+        med = statistics.median(s[begin:end])
+        if med == 1:
+            med = i
+        else:
+            med = int(med)
+        s_new[idx] = med
+
+    s_new = ["green" if i == 2 else "orange" for i in s_new]
+    return s_new
+
+
+def median_filter_new(df, r, s):
+    x_ls = df["x"].to_list()
+    max_x = max(x_ls)
+    s = df["s"].to_list()
+    s_new = [i for i in s]
+
+    for idx, x in enumerate(x_ls):
+        b = x - r
+        e = x + r
+
+        if b <= 0 or e >= max_x:
+            continue
+
+        bef = df.filter(pl.col("x").is_between(b, x-1))["s"].to_list()
+        aft = df.filter(pl.col("x").is_between(x+1, e))["s"].to_list()
+
+        if not bef or not aft:
+            continue
+
+        if len(bef) > len(aft):
+            bef = random.sample(bef, len(aft))
+        elif len(aft) > len(bef):
+            aft = random.sample(aft, len(bef))
+
+        med = statistics.median(bef+aft)
+
+        if med == 0.5:
+            med = s[idx]
+        else:
+            med = int(med)
+
+        s_new[idx] = med
+
+    s_new = ["green" if i == 2 else "orange" for i in s_new]
+    return s_new

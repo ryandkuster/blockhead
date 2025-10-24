@@ -150,11 +150,11 @@ def plot_wrong_blocks(args, mier_ls, df, bitwise_dt):
 
         # Prepare plot outfile name and basis
         img_path = os.path.join(args.outdir, f"{chrom}_{len(mier_ls)}_{str(args.breaks)}_VISUAL_SUMMARY.png")
-        # fig, axes = plt.subplots(nrows=len(features_dt.keys()), ncols=1, sharex=True, sharey=True, figsize=(30, len(features_dt.keys())*3), gridspec_kw={'hspace': 0.2, 'wspace': 0.03})
-        fig, axes = plt.subplots(nrows=len(features_dt.keys()), ncols=1, sharex=True, sharey=False, figsize=(30, len(features_dt.keys())*3), gridspec_kw={'hspace': 0.2, 'wspace': 0.03})
+        # fig, axes = plt.subplots(nrows=len(features_dt.keys()), ncols=1, sharex=True, sharey=False, figsize=(30, len(features_dt.keys())*3), gridspec_kw={'hspace': 0.2, 'wspace': 0.03})
+        fig, axes = plt.subplots(nrows=len(features_dt.keys())+1, ncols=1, sharex=True, sharey=False, figsize=(30, (len(features_dt.keys())+1)*3), gridspec_kw={'hspace': 0.2, 'wspace': 0.03})
 
         for idx, (feature, val) in enumerate(features_dt.items()):
-            averages, window_starts = block_windows(args, chrom_df, feature)
+            averages, counts, window_starts = block_windows(args, chrom_df, feature)
             if idx == 0:
                 window_ends = [i+(args.breaks-1) for i in window_starts]
                 chrom_label = [chrom for i in window_starts]
@@ -167,6 +167,13 @@ def plot_wrong_blocks(args, mier_ls, df, bitwise_dt):
             axes[idx].yaxis.set_major_formatter(plt.FuncFormatter(lambda x, p: f'{x:.2f}'))
             axes[idx].set_ylabel(f"{val[0]}", labelpad=150, va="center", ha="left", rotation=0, fontsize=14)
             axes[idx].margins(x=0.01, y=0.08)
+        # One final plot with the SNP counts in the window
+        axes[idx+1].plot(window_starts, counts, c="grey")
+        axes[idx+1].fill_between(window_starts, counts, color="grey", alpha=0.7)
+        axes[idx+1].yaxis.set_major_formatter(plt.FuncFormatter(lambda x, p: f'{x:.2f}'))
+        axes[idx+1].set_ylabel(f"SNP count", labelpad=150, va="center", ha="left", rotation=0, fontsize=14)
+        axes[idx+1].margins(x=0.01, y=0.08)
+
         axes[0].set_title(f"{chrom}", pad=20)
         axes[0].set_xticks(x_ticks)
         axes[0].set_xticklabels(tick_labels)
@@ -238,12 +245,17 @@ def block_windows(args, chrom_df, feature):
     window_ends = window_edges[1:] - 1
 
     averages = []
+    counts = []
     for i in range(len(window_starts)):
         mask = (pos_markers >= window_starts[i]) & (pos_markers <= window_ends[i])
         if np.any(mask):
             avg = np.mean(feature_np[mask])
+            cnt = len(feature_np[mask])
         else:
             avg = 0
+            cnt = 0
         averages.append(avg)
+        counts.append(cnt)
 
-    return averages, window_starts
+    averages = [float(i) for i in averages]
+    return averages, counts, window_starts

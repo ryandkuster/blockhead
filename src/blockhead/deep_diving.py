@@ -1,7 +1,7 @@
 import os
 
 import polars as pl
-
+import blockhead.df_manip as dm
 
 def deep_dive(args, format_fields, df, named_f1_dt):
     """
@@ -82,8 +82,8 @@ def expand_dd_df(format_fields, tmp_df, trio_ls):
             ])
 
             if i == "GT":
-                sample_df = recode_vcf(sample_df, [header])
-                sample_df = recode_missing([header], sample_df)
+                sample_df = dm.recode_vcf(sample_df, [header])
+                sample_df = dm.recode_missing([header], sample_df)
             elif i == "PL":
                 sample_df = sample_df.select(
                     pl.col(header).str.split(",").list.get(0).alias(f"{header}_0"),

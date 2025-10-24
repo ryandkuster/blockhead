@@ -30,10 +30,10 @@ def main():
         wc.plot_wrong_blocks(args, mier_ls, df, bitwise_dt)
         sys.exit()
 
-    # perform analysis on all parental calls
+    # Perform analysis on all parental calls.
     df, mier_ls = dm.parental_trios(args, sample_ls, df, named_f1_dt)
 
-    # perform analysis on homozygous parental calls only
+    # Perform analysis on homozygous parental calls only.
     dm.homozygous_parents(args, df, named_f1_dt)
 
     df = df.with_columns(
@@ -43,6 +43,8 @@ def main():
         ).alias("percent_mier_correct")
     )
     df = dm.stitch_coords(df, df_coords)
+    
+	# Filter based on the threshold.
     df = df.filter(df["percent_mier_correct"] >= args.threshold)
 
     if args.outvcf:
