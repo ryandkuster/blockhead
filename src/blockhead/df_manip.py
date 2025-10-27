@@ -65,7 +65,7 @@ def parental_trios(args, sample_ls, df, named_f1_dt):
     """
     print("analyzing parental trios")
     mier_ls = []
-    
+
     with open(os.path.join(args.outdir,"MIER_summary.tsv"), "w") as o:
         o.write(f"f1\tcorrect\tincorrect\tunknown\tcorrect_known\tcorrect_total\n")
         for f1, (p1, p2) in named_f1_dt.items():

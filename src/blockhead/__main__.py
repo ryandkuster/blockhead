@@ -43,8 +43,8 @@ def main():
         ).alias("percent_mier_correct")
     )
     df = dm.stitch_coords(df, df_coords)
-    
-	# Filter based on the threshold.
+
+    # Filter based on the threshold.
     df = df.filter(df["percent_mier_correct"] >= args.threshold)
 
     if args.outvcf:
