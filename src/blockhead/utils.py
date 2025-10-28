@@ -29,6 +29,9 @@ def parse_user_input():
     parser.add_argument('-b', '--blockmode', action='store_true',
                         help='perform haplotype block functionality')
 
+    parser.add_argument('-s', '--smooth', type=int, required=False,
+                        default=0, help='smooth haplotype blocks using median filter')
+
     parser.add_argument('-w', '--wrong_calls', action='store_true',
                         help='assess wrong calls only')
 

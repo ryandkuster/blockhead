@@ -166,6 +166,7 @@ def haplotype_per_cross(args, adv_ls, named_f1_dt, df):
     alpha_val = 0.5
     chrom_ls = sorted(df["#CHROM"].unique().to_list())
     colors_dt = haplotype_colors(args)
+    recomb_ls = []
 
     for chrom in chrom_ls:
 
@@ -174,8 +175,9 @@ def haplotype_per_cross(args, adv_ls, named_f1_dt, df):
         chrom_df = df.filter(
             (df["#CHROM"] == chrom)
         )
-        img_path = os.path.join(args.outdir, f"{chrom}_{len(adv_ls)}_haplotypes.png")
-        fig, axes = plt.subplots(nrows=len(adv_ls), ncols=3, sharex=True, figsize=(32, len(adv_ls)/3), gridspec_kw={'hspace': 0.3, 'width_ratios': [90, 1, 1], 'wspace': 0.03})
+
+        # img_path = os.path.join(args.outdir, f"{chrom}_{len(adv_ls)}_haplotypes.png")
+        fig, axes = plt.subplots(nrows=len(adv_ls), ncols=3, sharex='col', figsize=(32, len(adv_ls)/3), gridspec_kw={'hspace': 0.3, 'width_ratios': [90, 1, 1], 'wspace': 0.03})
 
         max_pos = chrom_df.select(pl.col("POS").max()).item()
         x_ticks = [i for i in range(0, max_pos, 5000000)]
@@ -183,85 +185,28 @@ def haplotype_per_cross(args, adv_ls, named_f1_dt, df):
 
         for idx, adv in enumerate(adv_ls):
             print(f"processing advanced hybrid : {adv}")
+
             lin_dt = get_advanced_lineage(adv, named_f1_dt)
-            print(lin_dt)
-
-            # filter to p1/p2 0/2 or 2/0
-            tmp_df = chrom_df.filter(
-                ((chrom_df[lin_dt["p1"]] == "0") & (chrom_df[lin_dt["p2"]] == "2")) | \
-                ((chrom_df[lin_dt["p1"]] == "2") & (chrom_df[lin_dt["p2"]] == "0"))
-            )
-
-            # filter to f1 MIER correct (note, 1 here is not genotype)
-            tmp_df = tmp_df.filter(
-                (tmp_df[f"MIER_{lin_dt["f1"]}"] == "1")
-            )
-
-            # filter to adv MIER correct (note, 1 here is not genotype)
-            tmp_df = tmp_df.filter(
-                (tmp_df[f"MIER_{lin_dt["adv"]}"] == "1")
-            )
-
-            # filter to p3 homozygous
-            tmp_df = tmp_df.filter(
-                (tmp_df[lin_dt["p3"]] == "0") | \
-                (tmp_df[lin_dt["p3"]] == "2")
-            )
-
-            """
-            Create new binary column called parent_type.
-            adv p3  parent_type
-            --- --  ------
-            0   0   0
-            1   0   2
-            1   2   0
-            2   2   2
-            """
-            tmp_df = tmp_df.with_columns(
-                pl.when((tmp_df[lin_dt["adv"]] == "0") & (tmp_df[lin_dt["p3"]] == "0")).then(pl.lit("0"))
-                  .when((tmp_df[lin_dt["adv"]] == "1") & (tmp_df[lin_dt["p3"]] == "0")).then(pl.lit("2"))
-                  .when((tmp_df[lin_dt["adv"]] == "1") & (tmp_df[lin_dt["p3"]] == "2")).then(pl.lit("0"))
-                  .when((tmp_df[lin_dt["adv"]] == "2") & (tmp_df[lin_dt["p3"]] == "2")).then(pl.lit("2"))
-                  .otherwise(pl.lit("99"))
-                  .alias("parent_type")
-            )
-
-            """
-            Create new column called parent_origin. This connects the
-            parent_type with the origin parent.
-            """
-            tmp_df = tmp_df.with_columns(
-                pl.when((tmp_df["parent_type"] == tmp_df[lin_dt["p1"]])).then(pl.lit(lin_dt["p1"]))
-                  .when((tmp_df["parent_type"] == tmp_df[lin_dt["p2"]])).then(pl.lit(lin_dt["p2"]))
-                  .otherwise(99)
-                  .alias("parent_origin")
-            )
-
-            keep_cols = ["POS", "parent_origin"] + [v for k, v in lin_dt.items()]
-
-            #TODO Experimental
-            #smooth_ls = [int(i) for i in tmp_df["parent_type"].to_list()]
-            #TODO Experimental
-
-            tmp_df = tmp_df.select(keep_cols)
-
-            tmp_df = tmp_df.with_columns(
-                pl.col("parent_origin").cast(pl.Categorical).to_physical().alias("parent_cats")
-            )
+            tmp_df = infer_haplotypes(adv, named_f1_dt, chrom_df, lin_dt)
 
             # Create a plot.
             x = tmp_df["POS"].to_list()
             y = tmp_df["parent_origin"].to_list()
-            colors = [colors_dt[id] for id in y]
-            y = [0 for i in y]
 
-            #TODO Experimental
-            #colors = median_filter(smooth_ls, 15000)
-            #df = pl.DataFrame({"s": smooth_ls, "x": x})
-            #colors = median_filter_new(df, 50000, smooth_ls)
-            #TODO Experimental
+            if args.smooth:
+                s = [0 if i == lin_dt["p1"] else 2 for i in y]
+                s_new = median_filter(s, args.smooth) #TODO
+                y_new = [lin_dt["p1"] if i == 0 else lin_dt["p2"] for i in s_new]
+                process_diffs(x, y, y_new)
+                # break_points(y)
+                recomb_ls += break_points(x, y_new)
+                colors = [colors_dt[id] for id in y_new]
+            else:
+                colors = [colors_dt[id] for id in y]
 
-            axes[idx, 0].scatter(x, y, s=500, marker="|", c=colors, edgecolor="none", alpha=alpha_val)
+            y = [0 for i in x]
+
+            axes[idx, 0].scatter(x, y, s=500, marker="|", c=colors, alpha=alpha_val)
             axes[idx, 0].set_yticks([])
             axes[idx, 0].set_ylabel(f"{adv}", labelpad=100, va="center", ha="left", rotation=0)
             axes[idx, 1].set_facecolor(colors_dt[lin_dt["f1"]])
@@ -278,23 +223,39 @@ def haplotype_per_cross(args, adv_ls, named_f1_dt, df):
             axes[idx, 2].set_xticklabels([])
             axes[idx, 2].set_xticks([])
 
-		# add x axis tick labels
-        #axes[0].set_xticks(x_ticks)
-        #axes[0].set_xticklabels(tick_labels)
 
         # remove the whitespace on the x axis that matplotlib defaults to
         for ax in axes:
-            ax[0].autoscale(enable=True, axis='x', tight=True)
+           ax[0].autoscale(enable=True, axis='x', tight=True)
 
         axes[0, 0].set_title(f"{chrom}", pad=20)
         axes[0, 1].set_title("F1", pad=20)
         axes[0, 2].set_title("P3", pad=20)
 
-        print(f"saving image to {img_path}")
-        plt.tight_layout()
-        plt.savefig(img_path)
+        # add x axis tick labels
+        axes[-1, 0].set_xticks(x_ticks)
+        axes[-1, 0].set_xticklabels(tick_labels)
 
-    return tmp_df
+        plt.subplots_adjust(bottom=0.2)
+
+        if not args.smooth:
+            img_path = os.path.join(args.outdir, f"{chrom}_{len(adv_ls)}_haplotypes.png")
+            print(f"saving image to {img_path}")
+            plt.savefig(img_path)
+        else:
+            img_path = os.path.join(args.outdir, f"{chrom}_{len(adv_ls)}_haplotypes_smooth.png")
+            print(f"saving image to {img_path}")
+            plt.savefig(img_path)
+
+            img_path = os.path.join(args.outdir, f"{chrom}_{len(adv_ls)}_haplotypes_breaks.png")
+            fig.subplots_adjust(top=0.5)
+            pos = axes[0,0].get_position()
+            hist_ax = fig.add_axes([pos.x0, pos.y0 + pos.height * 1.05, pos.width, 0.2])
+            hist_ax.hist(recomb_ls, bins=60, range=(0, max_pos))
+            hist_ax.xaxis.set_visible(False)
+            hist_ax.margins(x=0)
+            print(f"saving image to {img_path}")
+            plt.savefig(img_path)
 
 
 def haplotype_colors(args):
@@ -305,6 +266,72 @@ def haplotype_colors(args):
         colors_dt = {}
 
     return colors_dt
+
+
+def infer_haplotypes(adv, named_f1_dt, chrom_df, lin_dt):
+    """
+    Filter to the sites where p1/p2 are homozygous opposite and p3 is
+    homozygous, keeping only MIER correct calls along the way.
+
+    Create new binary column called parent_type based on lineage.
+
+    adv p3  parent_type
+    --- --  ------
+    0   0   0
+    1   0   2
+    1   2   0
+    2   2   2
+
+    Finally, create new column called parent_origin. This connects the
+    parent_type with the origin parent.
+    """
+    # filter to p1/p2 0/2 or 2/0
+    tmp_df = chrom_df.filter(
+        ((chrom_df[lin_dt["p1"]] == "0") & (chrom_df[lin_dt["p2"]] == "2")) | \
+        ((chrom_df[lin_dt["p1"]] == "2") & (chrom_df[lin_dt["p2"]] == "0"))
+    )
+
+    # filter to f1 MIER correct (note, 1 here is not genotype)
+    tmp_df = tmp_df.filter(
+        (tmp_df[f"MIER_{lin_dt["f1"]}"] == "1")
+    )
+
+    # filter to adv MIER correct (note, 1 here is not genotype)
+    tmp_df = tmp_df.filter(
+        (tmp_df[f"MIER_{lin_dt["adv"]}"] == "1")
+    )
+
+    # filter to p3 homozygous
+    tmp_df = tmp_df.filter(
+        (tmp_df[lin_dt["p3"]] == "0") | \
+        (tmp_df[lin_dt["p3"]] == "2")
+    )
+
+    tmp_df = tmp_df.with_columns(
+        pl.when((tmp_df[lin_dt["adv"]] == "0") & (tmp_df[lin_dt["p3"]] == "0")).then(pl.lit("0"))
+          .when((tmp_df[lin_dt["adv"]] == "1") & (tmp_df[lin_dt["p3"]] == "0")).then(pl.lit("2"))
+          .when((tmp_df[lin_dt["adv"]] == "1") & (tmp_df[lin_dt["p3"]] == "2")).then(pl.lit("0"))
+          .when((tmp_df[lin_dt["adv"]] == "2") & (tmp_df[lin_dt["p3"]] == "2")).then(pl.lit("2"))
+          .otherwise(pl.lit("99"))
+          .alias("parent_type")
+    )
+
+    tmp_df = tmp_df.with_columns(
+        pl.when((tmp_df["parent_type"] == tmp_df[lin_dt["p1"]])).then(pl.lit(lin_dt["p1"]))
+          .when((tmp_df["parent_type"] == tmp_df[lin_dt["p2"]])).then(pl.lit(lin_dt["p2"]))
+          .otherwise(99)
+          .alias("parent_origin")
+    )
+
+    keep_cols = ["POS", "parent_origin"] + [v for k, v in lin_dt.items()]
+
+    tmp_df = tmp_df.select(keep_cols)
+
+    tmp_df = tmp_df.with_columns(
+        pl.col("parent_origin").cast(pl.Categorical).to_physical().alias("parent_cats")
+    )
+
+    return tmp_df
 
 
 def median_filter(s, r):
@@ -329,10 +356,34 @@ def median_filter(s, r):
             med = int(med)
         s_new[idx] = med
 
-    s_new = ["green" if i == 2 else "orange" for i in s_new]
     return s_new
 
 
+def process_diffs(x, y, y_new):
+    x_ls = []
+    for i, j, k in zip(y, y_new, x):
+        if i != j:
+            x_ls.append(k)
+    print(f"\tpotentially wrong types: {len(x_ls)}")
+
+
+def break_points(x, y):
+    last_type = y[0]
+    break_no = 0
+    break_ls = []
+
+    for idx, (i, j)  in enumerate(zip(y, x)):
+        if idx == 0:
+            continue
+        if i != last_type:
+            break_no += 1
+            break_ls.append(j)
+        last_type = i
+    print(f"\tbreakpoints : {break_no}")
+    return break_ls
+
+
+# HERE BE DRAGONS (not cool ones, either)
 def median_filter_new(df, r, s):
     x_ls = df["x"].to_list()
     max_x = max(x_ls)
@@ -368,3 +419,41 @@ def median_filter_new(df, r, s):
 
     s_new = ["green" if i == 2 else "orange" for i in s_new]
     return s_new
+
+
+def adaptive_smoothing_kernel(x, y, bandwidth):
+    max_distance = bandwidth * 2
+
+    x = np.array(x)
+    y = np.array(y)
+    n = len(x)
+    smoothed = np.zeros_like(y, dtype=float)
+
+    # Sort data by x
+    sort_idx = np.argsort(x)
+    x_sorted = x[sort_idx]
+    y_sorted = y[sort_idx]
+
+    for i in range(n):
+        # Binary search for window boundaries
+        left_bound = x_sorted[i] - max_distance
+        right_bound = x_sorted[i] + max_distance
+
+        left_idx = np.searchsorted(x_sorted, left_bound, side='left')
+        right_idx = np.searchsorted(x_sorted, right_bound, side='right')
+
+        # Get points in window
+        x_window = x_sorted[left_idx:right_idx]
+        y_window = y_sorted[left_idx:right_idx]
+
+        # Calculate distances and weights
+        distances = np.abs(x_window - x_sorted[i])
+        weights = np.exp(-distances**2 / (2 * bandwidth**2))
+
+        # Weighted average
+        smoothed[i] = np.sum(weights * y_window) / np.sum(weights)
+
+    smoothed = ["green" if i >= 0.5 else "orange" for i in smoothed]
+
+    return smoothed
+

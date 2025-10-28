@@ -57,12 +57,12 @@ def get_advanced_lineage(adv, named_f1_dt):
     for i in named_f1_dt[adv]:
         if i in named_f1_dt.keys():
             f1 = i
-            print(f"{i} is a hybrid")
+            # print(f"{i} is a hybrid")
             p1, p2 = named_f1_dt[f1]
-            print(f"{p1} and {p2} are {f1} parents")
+            # print(f"{p1} and {p2} are {f1} parents")
         else:
             p3 = i
-            print(f"{i} is p3")
+            # print(f"{i} is p3")
     
     lin_dt = {"adv" : adv,
               "f1"  : f1,
