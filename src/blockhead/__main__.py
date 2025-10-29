@@ -25,6 +25,8 @@ def main():
     df = dm.recode_vcf(df, sample_ls)
     df = dm.recode_missing(sample_ls, df)
 
+    # Summarize the MIER-incorrect calls by type, saving summary.
+    # Note df here modifies structure of df, must exit.
     if args.wrong_calls:
         df, mier_ls, bitwise_dt = wc.wrongo_bongo(args, df_coords, df, named_f1_dt)
         wc.plot_wrong_blocks(args, mier_ls, df, bitwise_dt)
@@ -36,6 +38,7 @@ def main():
     # Perform analysis on homozygous parental calls only.
     dm.homozygous_parents(args, df, named_f1_dt)
 
+    # Create a column with percent mier correct.
     df = df.with_columns(
         (
             pl.sum_horizontal([pl.col(c) == 1 for c in mier_ls])
@@ -47,6 +50,7 @@ def main():
     # Filter based on the threshold.
     df = df.filter(df["percent_mier_correct"] >= args.threshold)
 
+    # Save vcf of calls filtered to threshold correct.
     if args.outvcf:
         df_coords = df.select(["#CHROM", "POS"])
         compressed = um.gzip_test(args.vcf)

@@ -149,7 +149,7 @@ def plot_wrong_blocks(args, mier_ls, df, bitwise_dt):
         tick_labels = [f'{x/1e6:.0f}Mb' if x != 0 else '0' for x in x_ticks]
 
         # Prepare plot outfile name and basis
-        img_path = os.path.join(args.outdir, f"{chrom}_{len(mier_ls)}_{str(args.breaks)}_VISUAL_SUMMARY.png")
+        img_path = os.path.join(args.outdir, f"{chrom}_{len(mier_ls)}_{str(args.breaks)}_wrong_calls.png")
         # fig, axes = plt.subplots(nrows=len(features_dt.keys()), ncols=1, sharex=True, sharey=False, figsize=(30, len(features_dt.keys())*3), gridspec_kw={'hspace': 0.2, 'wspace': 0.03})
         fig, axes = plt.subplots(nrows=len(features_dt.keys())+1, ncols=1, sharex=True, sharey=False, figsize=(30, (len(features_dt.keys())+1)*3), gridspec_kw={'hspace': 0.2, 'wspace': 0.03})
 
