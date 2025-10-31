@@ -8,19 +8,16 @@ import blockhead.df_manip as dm
 import blockhead.parentage as pm
 import blockhead.utils as um
 import blockhead.wrong_calls as wc
-import blockhead.deep_diving as dd
 
 
 def main():
+    # print(pl.show_versions())
     args = um.parse_user_input()
     os.environ["POLARS_MAX_THREADS"] = str(args.threads)
     og_df, df, df_coords, format_fields = dm.read_vcf(args)
     parent_dt, cross_ls, named_f1_dt = pm.get_parentage(args)
     adv_ls = pm.get_advanced(named_f1_dt)
     sample_ls = pm.get_sample_ls(named_f1_dt)
-
-    if args.deep_dive:
-        dd.deep_dive(args, format_fields, df, named_f1_dt)
 
     df = dm.recode_vcf(df, sample_ls)
     df = dm.recode_missing(sample_ls, df)
@@ -45,10 +42,20 @@ def main():
             / len(mier_ls)
         ).alias("percent_mier_correct")
     )
+
+    # Create a column with percent non-missing.
+    df = df.with_columns(
+        (
+            pl.sum_horizontal([pl.col(c) != 3 for c in mier_ls])
+            / len(mier_ls)
+        ).alias("percent_non_missing")
+    )
+
     df = dm.stitch_coords(df, df_coords)
 
-    # Filter based on the threshold.
+    # Filter based on the thresholds
     df = df.filter(df["percent_mier_correct"] >= args.threshold)
+    df = df.filter(df["percent_non_missing"] >= args.non_missing)
 
     # Save vcf of calls filtered to threshold correct.
     if args.outvcf:

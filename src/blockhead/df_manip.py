@@ -69,7 +69,6 @@ def parental_trios(args, sample_ls, df, named_f1_dt):
     with open(os.path.join(args.outdir,"MIER_summary.tsv"), "w") as o:
         o.write(f"f1\tcorrect\tincorrect\tunknown\tcorrect_known\tcorrect_total\n")
         for f1, (p1, p2) in named_f1_dt.items():
-            print(f"{f1} {p1} {p2}")
             new_col = f"MIER_{f1}"
             mier_ls.append(new_col)
             sample_ls.append(new_col)
@@ -101,7 +100,6 @@ def homozygous_parents(args, df, named_f1_dt):
     with open(os.path.join(args.outdir,"MIER_summary_homozygous_parents.tsv"), "w") as o:
         o.write(f"f1\tcorrect\tincorrect\tunknown\tcorrect_known\tcorrect_total\n")
         for f1, (p1, p2) in named_f1_dt.items():
-            print(f"{f1} {p1} {p2}")
             new_col = f"MIER_{f1}"
 
             df_hom = df.filter(
@@ -166,7 +164,12 @@ def haplotype_per_cross(args, adv_ls, named_f1_dt, df):
     alpha_val = 0.5
     chrom_ls = sorted(df["#CHROM"].unique().to_list())
     colors_dt = haplotype_colors(args)
-    recomb_ls = []
+
+    if args.smooth:
+        recomb_ls = []
+
+    if args.assess:
+        truth_df = pl.read_csv(args.assess, has_header=True, separator="\t")
 
     for chrom in chrom_ls:
 
@@ -176,7 +179,6 @@ def haplotype_per_cross(args, adv_ls, named_f1_dt, df):
             (df["#CHROM"] == chrom)
         )
 
-        # img_path = os.path.join(args.outdir, f"{chrom}_{len(adv_ls)}_haplotypes.png")
         fig, axes = plt.subplots(nrows=len(adv_ls), ncols=3, sharex='col', figsize=(32, len(adv_ls)/3), gridspec_kw={'hspace': 0.3, 'width_ratios': [90, 1, 1], 'wspace': 0.03})
 
         max_pos = chrom_df.select(pl.col("POS").max()).item()
@@ -198,11 +200,33 @@ def haplotype_per_cross(args, adv_ls, named_f1_dt, df):
                 s_new = median_filter(s, args.smooth) #TODO
                 y_new = [lin_dt["p1"] if i == 0 else lin_dt["p2"] for i in s_new]
                 process_diffs(x, y, y_new)
-                # break_points(y)
                 recomb_ls += break_points(x, y_new)
                 colors = [colors_dt[id] for id in y_new]
+                smooth_df = pl.DataFrame({
+                    "CHROM": chrom,
+                    "POS": x,
+                    adv: y_new
+                })
+                if idx == 0:
+                    block_df = smooth_df
+                else:
+                    block_df = block_df.join(smooth_df, on=["CHROM", "POS"], how="outer", coalesce=True)
             else:
                 colors = [colors_dt[id] for id in y]
+
+            if args.assess:
+                truth_x = truth_df.filter(pl.col("CHROM") == chrom)["POS"].to_list()
+                truth_y = truth_df.filter(pl.col("CHROM") == chrom)[adv].to_list()
+                new_x, new_y = assess_blocks(x, y, truth_x, truth_y)
+                assess_df = pl.DataFrame({
+                    "CHROM": chrom,
+                    "POS": new_x,
+                    adv: new_y
+                })
+                if idx == 0:
+                    wrong_df = assess_df
+                else:
+                    wrong_df = wrong_df.join(assess_df, on=["CHROM", "POS"], how="outer", coalesce=True)
 
             y = [0 for i in x]
 
@@ -222,7 +246,6 @@ def haplotype_per_cross(args, adv_ls, named_f1_dt, df):
             axes[idx, 2].set_yticks([])
             axes[idx, 2].set_xticklabels([])
             axes[idx, 2].set_xticks([])
-
 
         # remove the whitespace on the x axis that matplotlib defaults to
         for ax in axes:
@@ -256,6 +279,12 @@ def haplotype_per_cross(args, adv_ls, named_f1_dt, df):
             hist_ax.margins(x=0)
             print(f"saving image to {img_path}")
             plt.savefig(img_path)
+
+    if args.smooth:
+        block_df.write_csv(os.path.join(args.outdir, f"{len(adv_ls)}_haplotypes_{args.smooth}_smooth_blocks.tsv"), separator="\t", include_header=True)
+
+    if args.assess:
+        wrong_df.write_csv(os.path.join(args.outdir, f"{len(adv_ls)}_haplotypes_assess_blocks.tsv"), separator="\t", include_header=True)
 
 
 def haplotype_colors(args):
@@ -381,6 +410,44 @@ def break_points(x, y):
         last_type = i
     print(f"\tbreakpoints : {break_no}")
     return break_ls
+
+
+def assess_blocks(x, y, truth_x, truth_y):
+    """
+    Iterate truth_x and truth_y and define a start-end range at change
+    point as well as the parental type in this range.
+
+    At each change point, iterate x and y and when x in above range,
+    record the positions where y agrees/disagrees with type.
+    """
+
+    test_df = pl.DataFrame({"x": x, "y": y})
+    new_x = []
+    new_y = []
+
+    last_type = truth_y[0]
+    start_type = truth_x[0]
+
+    for idx, (r_x, r_y) in enumerate(zip(truth_x, truth_y)):
+        if idx == 0:
+            continue
+
+        # If a breakpoint is detected, process.
+        if r_y != last_type:
+            end_type = truth_x[idx-1]
+            type_df = test_df.filter(pl.col("x").is_between(start_type, end_type))
+            new_x += type_df["x"].to_list()
+            new_y += [0 if i == last_type else 1 for i in type_df["y"].to_list()]
+            start_type = r_x
+
+        last_type = r_y
+
+    end_type = truth_x[-1]
+    type_df = test_df.filter(pl.col("x").is_between(start_type, end_type))
+    new_x += type_df["x"].to_list()
+    new_y += [0 if i == last_type else 1 for i in type_df["y"].to_list()]
+
+    return new_x, new_y
 
 
 # HERE BE DRAGONS (not cool ones, either)
