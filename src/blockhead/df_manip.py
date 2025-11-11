@@ -235,16 +235,9 @@ def haplotype_per_cross(args, adv_ls, named_f1_dt, df):
                     adv: new_y
                 })
                 if idx == 0:
-                    wrong_df = assess_df
-                else:
-                    new_positions = assess_df.select(["CHROM", "POS"]).join(wrong_df.select(["CHROM", "POS"]), on=["CHROM", "POS"], how="anti")
-                    other_cols = [col for col in wrong_df.columns if col not in ["CHROM", "POS"]]
-                    for col in other_cols:
-                        new_positions = new_positions.with_columns(
-                            pl.lit(None).cast(wrong_df[col].dtype).alias(col)
-                        )
-                    wrong_df = pl.concat([wrong_df, new_positions])
-                    wrong_df = wrong_df.join(assess_df, on=["CHROM", "POS"], how="left")
+                    wrong_df = chrom_df.select(["#CHROM", "POS"])
+                    wrong_df = wrong_df.rename({"#CHROM": "CHROM"})
+                wrong_df = wrong_df.join(assess_df, on=["CHROM", "POS"], how="left")
 
             y = [0 for i in x]
 
@@ -307,6 +300,9 @@ def haplotype_per_cross(args, adv_ls, named_f1_dt, df):
         out_block_df.write_csv(os.path.join(args.outdir, f"{len(adv_ls)}_haplotypes_{args.smooth}_smooth_blocks.tsv"), separator="\t", include_header=True)
 
     if args.assess:
+        out_wrong_df = out_wrong_df.filter(
+            pl.any_horizontal([pl.col(c).is_not_null() for c in adv_ls])
+        )
         out_wrong_df.write_csv(os.path.join(args.outdir, f"{len(adv_ls)}_haplotypes_assess_blocks.tsv"), separator="\t", include_header=True)
 
 
