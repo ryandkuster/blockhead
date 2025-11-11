@@ -20,16 +20,16 @@ def read_vcf(args) -> pl.DataFrame:
     Save the df_coords for writing final output file.
     """
     print("opening vcf")
-    og_df = pl.read_csv(args.vcf,
+    df = pl.read_csv(args.vcf,
                      separator="\t",
                      comment_prefix="##")
-    print(f"{og_df.shape[0]} variants found")
-    df = og_df.filter((pl.col("REF").str.len_chars() == 1) & (pl.col("ALT").str.len_chars() == 1))
+    print(f"{df.shape[0]} variants found")
+    df = df.filter((pl.col("REF").str.len_chars() == 1) & (pl.col("ALT").str.len_chars() == 1))
     print(f"{df.shape[0]} biallelic SNPs found")
     df_coords = df.select(["#CHROM", "POS"])
     format_fields = df.select(pl.col(df.columns[8]).first()).item(0, 0)
     df = df.select(df.columns[9:])
-    return og_df, df, df_coords, format_fields
+    return df, df_coords, format_fields
 
 
 def recode_vcf(df: pl.DataFrame, sample_ls: dict) -> pl.DataFrame:
@@ -127,15 +127,21 @@ def stitch_coords(df, df_coords):
     return df
 
 
-def write_outfile(args, og_df, df_coords, f):
+def write_outfile(args, df_coords, f):
     """
     Write a vcf of the input vcf file coords with only the relevant
     MIER correct variants present based on filtering threshold.
     """
+    # og_df = pl.read_csv(args.vcf,
+                        # separator="\t",
+                        # comment_prefix="##")
+    # og_df = og_df.join(df_coords, on=["#CHROM", "POS"], how="semi")
+    og_lf = pl.scan_csv(args.vcf,
+                        separator="\t",
+                        comment_prefix="##")
+    og_lf = og_lf.join(df_coords, on=["#CHROM", "POS"], how="semi")
+    og_df = og_lf.collect()
 
-    original_count = og_df.shape[0]
-    og_df = og_df.join(df_coords, on=["#CHROM", "POS"], how="semi")
-    percent_count = og_df.shape[0]/original_count
     args.outfile = os.path.join(args.outdir, "MIER_filtered.vcf")
 
     print("writing header")
@@ -144,9 +150,10 @@ def write_outfile(args, og_df, df_coords, f):
             if line.startswith("##"):
                 o.write(line)
             else:
+                o.write(f"## BLOCKHEAD MIER threshold : {args.threshold} ; non_missing : {args.non_missing}\n")
                 break
 
-    print(f"writing {og_df.shape[0]} variants ({percent_count:.2%} original vcf entries retained)")
+    print(f"writing {og_df.shape[0]} variants")
     with open(args.outfile, "a") as o:
         og_df.write_csv(o, separator='\t')
 
@@ -166,12 +173,16 @@ def haplotype_per_cross(args, adv_ls, named_f1_dt, df):
     colors_dt = haplotype_colors(args)
 
     if args.smooth:
-        recomb_ls = []
+        out_block_df = pl.DataFrame()
 
     if args.assess:
         truth_df = pl.read_csv(args.assess, has_header=True, separator="\t")
+        out_wrong_df = pl.DataFrame()
 
     for chrom in chrom_ls:
+
+        if args.smooth:
+            recomb_ls = []
 
         # filter to a single chromosome
         print(f"subsetting {chrom}")
@@ -226,7 +237,14 @@ def haplotype_per_cross(args, adv_ls, named_f1_dt, df):
                 if idx == 0:
                     wrong_df = assess_df
                 else:
-                    wrong_df = wrong_df.join(assess_df, on=["CHROM", "POS"], how="outer", coalesce=True)
+                    new_positions = assess_df.select(["CHROM", "POS"]).join(wrong_df.select(["CHROM", "POS"]), on=["CHROM", "POS"], how="anti")
+                    other_cols = [col for col in wrong_df.columns if col not in ["CHROM", "POS"]]
+                    for col in other_cols:
+                        new_positions = new_positions.with_columns(
+                            pl.lit(None).cast(wrong_df[col].dtype).alias(col)
+                        )
+                    wrong_df = pl.concat([wrong_df, new_positions])
+                    wrong_df = wrong_df.join(assess_df, on=["CHROM", "POS"], how="left")
 
             y = [0 for i in x]
 
@@ -259,8 +277,6 @@ def haplotype_per_cross(args, adv_ls, named_f1_dt, df):
         axes[-1, 0].set_xticks(x_ticks)
         axes[-1, 0].set_xticklabels(tick_labels)
 
-        plt.subplots_adjust(bottom=0.2)
-
         if not args.smooth:
             img_path = os.path.join(args.outdir, f"{chrom}_{len(adv_ls)}_haplotypes.png")
             print(f"saving image to {img_path}")
@@ -271,20 +287,27 @@ def haplotype_per_cross(args, adv_ls, named_f1_dt, df):
             plt.savefig(img_path)
 
             img_path = os.path.join(args.outdir, f"{chrom}_{len(adv_ls)}_haplotypes_breaks.png")
-            fig.subplots_adjust(top=0.5)
+            # Squish the subplots to the bottom 80%.
+            fig.subplots_adjust(top=0.8)
             pos = axes[0,0].get_position()
-            hist_ax = fig.add_axes([pos.x0, pos.y0 + pos.height * 1.05, pos.width, 0.2])
-            hist_ax.hist(recomb_ls, bins=60, range=(0, max_pos))
+            hist_ax = fig.add_axes([pos.x0, pos.y0 + pos.height * 1.05, pos.width, 0.15])
+            bin_no = int(max_pos//1e6) * 2
+            hist_ax.hist(recomb_ls, bins=bin_no, range=(0, max_pos), color="grey")
             hist_ax.xaxis.set_visible(False)
             hist_ax.margins(x=0)
             print(f"saving image to {img_path}")
+            hist_ax.set_title(f"{chrom}", pad=20)
             plt.savefig(img_path)
+            out_block_df = pl.concat([out_block_df, block_df])
+
+        if args.assess:
+            out_wrong_df = pl.concat([out_wrong_df, wrong_df])
 
     if args.smooth:
-        block_df.write_csv(os.path.join(args.outdir, f"{len(adv_ls)}_haplotypes_{args.smooth}_smooth_blocks.tsv"), separator="\t", include_header=True)
+        out_block_df.write_csv(os.path.join(args.outdir, f"{len(adv_ls)}_haplotypes_{args.smooth}_smooth_blocks.tsv"), separator="\t", include_header=True)
 
     if args.assess:
-        wrong_df.write_csv(os.path.join(args.outdir, f"{len(adv_ls)}_haplotypes_assess_blocks.tsv"), separator="\t", include_header=True)
+        out_wrong_df.write_csv(os.path.join(args.outdir, f"{len(adv_ls)}_haplotypes_assess_blocks.tsv"), separator="\t", include_header=True)
 
 
 def haplotype_colors(args):
@@ -364,13 +387,31 @@ def infer_haplotypes(adv, named_f1_dt, chrom_df, lin_dt):
 
 
 def median_filter(s, r):
+    """
+    Extend r SNPs in either direction of target locus and use the median
+    identity to update the current prediction.
+
+    If particularly close to the ends of the range, use a hard-coded
+    end_dist to define a distal number of SNPs that are assumed to not
+    change identity. between end_dist and r SNPs away from endpoints,
+    use a symmetrical distance from target to the end such that the
+    range extending outward is always the same on both sides of the
+    target.
+    """
+    end_dist = round(r/10)
     s_len = len(s)
     s_new = [i for i in s]
 
     for idx, i in enumerate(s):
-        if idx < r:
+        if idx < end_dist:
+            begin = 0
+            end = end_dist + 1
+        elif idx < r:
             begin = 0
             end = 2*idx + 1
+        elif idx + end_dist >= s_len:
+            begin = s_len - end_dist
+            end = s_len
         elif idx + r >= s_len:
             begin = idx - (s_len - idx) + 1
             end = s_len

@@ -39,7 +39,7 @@ def main():
             (df2["chrom"] == chrom2)
         )
 
-        img_path = os.path.join(sys.argv[3], f"TEST_{chrom1}.png")
+        img_path = os.path.join(sys.argv[3], f"compare_{chrom1}.png")
         fig, axes = plt.subplots(nrows=len(features_dt.keys()), ncols=1, sharex=True, sharey=False, figsize=(30, len(features_dt.keys())*3), gridspec_kw={'hspace': 0.2, 'wspace': 0.03})
 
         for idx, (feature, val) in enumerate(features_dt.items()):

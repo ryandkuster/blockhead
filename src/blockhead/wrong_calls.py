@@ -209,19 +209,19 @@ def calc_perecentages(df):
     df = df.with_columns(
         pl.when(pl.col("known") == 0)
         .then(0)
-        .otherwise(pl.col("het_wrong") / pl.col("known"))
+        .otherwise(pl.col("het_wrong") / pl.col("total"))
         .alias("pct_het_wrong")
     )
     df = df.with_columns(
         pl.when(pl.col("known") == 0)
         .then(0)
-        .otherwise(pl.col("hom_ref_wrong") / pl.col("known"))
+        .otherwise(pl.col("hom_ref_wrong") / pl.col("total"))
         .alias("pct_hom_ref_wrong")
     )
     df = df.with_columns(
         pl.when(pl.col("known") == 0)
         .then(0)
-        .otherwise(pl.col("hom_alt_wrong") / pl.col("known"))
+        .otherwise(pl.col("hom_alt_wrong") / pl.col("total"))
         .alias("pct_hom_alt_wrong")
     )
     return df

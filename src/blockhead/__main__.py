@@ -14,7 +14,7 @@ def main():
     # print(pl.show_versions())
     args = um.parse_user_input()
     os.environ["POLARS_MAX_THREADS"] = str(args.threads)
-    og_df, df, df_coords, format_fields = dm.read_vcf(args)
+    df, df_coords, format_fields = dm.read_vcf(args)
     parent_dt, cross_ls, named_f1_dt = pm.get_parentage(args)
     adv_ls = pm.get_advanced(named_f1_dt)
     sample_ls = pm.get_sample_ls(named_f1_dt)
@@ -63,10 +63,10 @@ def main():
         compressed = um.gzip_test(args.vcf)
         if compressed:
             with gzip.open(args.vcf, "rt", encoding='utf-8') as f:
-                dm.write_outfile(args, og_df, df_coords, f)
+                dm.write_outfile(args, df_coords, f)
         else:
             with open(args.vcf) as f:
-                dm.write_outfile(args, og_df, df_coords, f)
+                dm.write_outfile(args, df_coords, f)
 
     if args.blockmode and len(adv_ls) > 0:
         print("determining parentage haplotypes for advance hybrids")
