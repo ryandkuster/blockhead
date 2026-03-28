@@ -226,9 +226,13 @@ def haplotype_per_cross(args, adv_ls, named_f1_dt, df):
                 colors = [colors_dt[id] for id in y]
 
             if args.assess:
-                truth_x = truth_df.filter(pl.col("CHROM") == chrom)["POS"].to_list()
-                truth_y = truth_df.filter(pl.col("CHROM") == chrom)[adv].to_list()
+                adv_truth_df = truth_df.filter(pl.col(adv).is_not_null())
+                adv_truth_df = adv_truth_df.sort(["CHROM", "POS"])
+                truth_x = adv_truth_df.filter(pl.col("CHROM") == chrom)["POS"].to_list()
+                truth_y = adv_truth_df.filter(pl.col("CHROM") == chrom)[adv].to_list()
+
                 new_x, new_y = assess_blocks(x, y, truth_x, truth_y)
+
                 assess_df = pl.DataFrame({
                     "CHROM": chrom,
                     "POS": new_x,
@@ -273,11 +277,11 @@ def haplotype_per_cross(args, adv_ls, named_f1_dt, df):
         if not args.smooth:
             img_path = os.path.join(args.outdir, f"{chrom}_{len(adv_ls)}_haplotypes.png")
             print(f"saving image to {img_path}")
-            plt.savefig(img_path)
+            plt.savefig(img_path, dpi=300, bbox_inches="tight")
         else:
             img_path = os.path.join(args.outdir, f"{chrom}_{len(adv_ls)}_haplotypes_smooth.png")
             print(f"saving image to {img_path}")
-            plt.savefig(img_path)
+            plt.savefig(img_path, dpi=300, bbox_inches="tight")
 
             img_path = os.path.join(args.outdir, f"{chrom}_{len(adv_ls)}_haplotypes_breaks.png")
             # Squish the subplots to the bottom 80%.
@@ -290,7 +294,7 @@ def haplotype_per_cross(args, adv_ls, named_f1_dt, df):
             hist_ax.margins(x=0)
             print(f"saving image to {img_path}")
             hist_ax.set_title(f"{chrom}", pad=20)
-            plt.savefig(img_path)
+            plt.savefig(img_path, dpi=300, bbox_inches="tight")
             out_block_df = pl.concat([out_block_df, block_df])
 
         if args.assess:
@@ -457,7 +461,6 @@ def assess_blocks(x, y, truth_x, truth_y):
     At each change point, iterate x and y and when x in above range,
     record the positions where y agrees/disagrees with type.
     """
-
     test_df = pl.DataFrame({"x": x, "y": y})
     new_x = []
     new_y = []

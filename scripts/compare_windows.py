@@ -14,12 +14,12 @@ import sys
 
 
 def main():
-    features_dt = {"pct_hom_ref_wrong": ["incorrect 0/0 / total",   "#F6D55C"],
-                   "pct_het_wrong":     ["incorrect 0/1 / total",   "#3CAEA3"],
-                   "pct_hom_alt_wrong": ["incorrect 1/1 / total",   "#20639B"],
-                   "pct_incorrect":     ["incorrect / total", "#ED553B"],
-                   "pct_correct":       ["correct / total", "#173F5F"],
-                   "pct_missing":       ["missing / total", "black"]}
+    features_dt = {"pct_hom_ref_wrong": [f"Incorrect\n(0/0)", "#F6D55C"],
+                   "pct_het_wrong":     [f"Incorrect\n(0/1)", "#3CAEA3"],
+                   "pct_hom_alt_wrong": [f"Incorrect\n(1/1)", "#20639B"],
+                   "pct_incorrect":     [f"Incorrect\n(all)", "#ED553B"],
+                   "pct_correct":       [f"Correct", "#173F5F"],
+                   "pct_missing":       [f"Missing", "black"]}
 
     df1 = pl.read_csv(sys.argv[1], separator="\t")
     df2 = pl.read_csv(sys.argv[2], separator="\t")
@@ -43,22 +43,26 @@ def main():
         fig, axes = plt.subplots(nrows=len(features_dt.keys()), ncols=1, sharex=True, sharey=False, figsize=(30, len(features_dt.keys())*3), gridspec_kw={'hspace': 0.2, 'wspace': 0.03})
 
         for idx, (feature, val) in enumerate(features_dt.items()):
-            axes[idx].plot(chrom_df1["start"], chrom_df1[feature], c=val[1], linewidth=2)
-            axes[idx].plot(chrom_df2["start"], chrom_df2[feature], c=val[1], linewidth=2, linestyle='dotted')
-            axes[idx].fill_between(chrom_df1["start"], chrom_df1[feature], chrom_df2[feature], alpha=0.1, color="gray")
-            axes[idx].set_ylabel(f"{val[0]}", labelpad=150, va="center", ha="left", rotation=0, fontsize=14)
+            axes[idx].plot(chrom_df1["start"], chrom_df1[feature] * 100, c=val[1], linewidth=3)
+            axes[idx].plot(chrom_df2["start"], chrom_df2[feature] * 100, c=val[1], linewidth=3, linestyle='dotted')
+            axes[idx].fill_between(chrom_df1["start"], chrom_df1[feature] * 100, chrom_df2[feature] * 100, alpha=0.1, color="gray")
+            axes[idx].set_ylabel(f"{val[0]}", va="center", ha="center", rotation=0, fontsize=22)
+            axes[idx].yaxis.set_label_coords(-0.08, 0.5)
             axes[idx].margins(x=0.01, y=0.08)
-            axes[idx].yaxis.set_major_formatter(plt.FuncFormatter(lambda x, p: f'{x:.2f}'))
+            axes[idx].yaxis.set_major_formatter(plt.FuncFormatter(lambda x, p: f'{x:.0f}%'))
+            axes[idx].tick_params(axis='y', labelsize=14)
+            axes[idx].tick_params(axis='x', length=5, width=2)
 
         max_pos = chrom_df1.select(pl.col("start").max()).item()
         x_ticks = [i for i in range(0, max_pos, 5000000)]
         tick_labels = [f'{x/1e6:.0f}Mb' if x != 0 else '0' for x in x_ticks]
-        axes[0].set_xticks(x_ticks)
-        axes[0].set_xticklabels(tick_labels)
-        axes[0].set_title(f"{chrom1}", pad=20, fontsize=16)
+        axes[0].set_title(f"{chrom1}", pad=20, fontsize=30)
+        axes[-1].set_xticks(x_ticks)
+        axes[-1].set_xticklabels(tick_labels)
+        axes[-1].tick_params(axis='x', labelsize=18)
 
-        graph = mlines.Line2D([], [], color='black', linestyle='dotted', label='graph reference')
-        linear = mlines.Line2D([], [], color='black', linestyle='solid', label='linear reference')
+        graph = mlines.Line2D([], [], color='black', linestyle='dotted', label='vg-surject BCFtools', linewidth=3)
+        linear = mlines.Line2D([], [], color='black', linestyle='solid', label='linear BCFtools', linewidth=3)
 
         plt.legend(
             bbox_to_anchor=(1, len(features_dt.keys())+1),
@@ -68,10 +72,10 @@ def main():
             fancybox=True,      # rounded corners
             ncol=2,             # number of columns
             handles=[graph, linear],
-            fontsize=14
+            fontsize=22
         )
         plt.tight_layout()
-        plt.savefig(img_path)
+        plt.savefig(img_path, dpi=300, bbox_inches="tight")
 
 
 if __name__ == "__main__":

@@ -33,7 +33,7 @@ def main():
     df, mier_ls = dm.parental_trios(args, sample_ls, df, named_f1_dt)
 
     # Perform analysis on homozygous parental calls only.
-    dm.homozygous_parents(args, df, named_f1_dt)
+    dm.homozygous_parents(args, df, named_f1_dt) #TODO
 
     # Create a column with percent mier correct.
     df = df.with_columns(
