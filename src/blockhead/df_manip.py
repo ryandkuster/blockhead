@@ -1,566 +1,500 @@
-import gzip
 import os
-import random
-import statistics
-import sys
 
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import numpy as np
 import polars as pl
-import seaborn as sns
 
 from blockhead.parentage import get_advanced_lineage
 
-# pl.Config.set_tbl_cols(-1)
+# Genotype encoding (cyvcf2 gt_types)
+HOM_REF = 0
+HET = 1
+UNKNOWN = 2
+HOM_ALT = 3
 
-def read_vcf(args) -> pl.DataFrame:
-    """
-    Open the vcf, skipping all header info except relevant fields.
-    Keep only bi-allelic SNPs.
-    Save the df_coords for writing final output file.
-    """
-    print("opening vcf")
-    df = pl.read_csv(args.vcf,
-                     separator="\t",
-                     comment_prefix="##")
-    print(f"{df.shape[0]} variants found")
-    df = df.filter((pl.col("REF").str.len_chars() == 1) & (pl.col("ALT").str.len_chars() == 1))
-    print(f"{df.shape[0]} biallelic SNPs found")
-    df_coords = df.select(["#CHROM", "POS"])
-    format_fields = df.select(pl.col(df.columns[8]).first()).item(0, 0)
-    df = df.select(df.columns[9:])
-    return df, df_coords, format_fields
+# MIER result encoding
+MIER_CORRECT = 1
+MIER_INCORRECT = 2
+MIER_MISSING = 3
 
 
-def recode_vcf(df: pl.DataFrame, sample_ls: dict) -> pl.DataFrame:
+def fetch_chrom(vcf_path, chrom, sample_names, threads=1):
     """
-    Recode three monoallelic genotypes as 0, 1, or 2.
+    Fetch a single chromosome from a tabix-indexed VCF.
+    Returns (pos_arr, gts_matrix) or (None, None) if no biallelic SNPs found.
     """
-    df = df.with_columns([
-        pl.col(sample).str.split(":").list.first()
-        .str.replace(r"[\/|]", "", literal=False)
-        .str.replace(r"00", "0")
-        .str.replace(r"11", "2")
-        .str.replace(r"01", "1")
-        .str.replace(r"10", "1").alias(sample).cast(pl.Int64, strict=False)
-    for sample in sample_ls
-    ])
-    return df
+    from cyvcf2 import VCF
+    vcf = VCF(vcf_path, strict_gt=False, threads=threads)
+    vcf_samples = vcf.samples
+    try:
+        sample_indices = np.array([vcf_samples.index(s) for s in sample_names])
+    except ValueError as e:
+        raise ValueError(f"Sample not found in VCF: {e}")
+
+    n_samples = len(sample_indices)
+    _BUF = 131_072
+    pos_buf = np.empty(_BUF, dtype=np.int32)
+    gts_buf = np.empty((_BUF, n_samples), dtype=np.uint8)
+    n = 0
+
+    for variant in vcf(chrom):
+        if (len(variant.REF) != 1 or len(variant.ALT) != 1
+                or len(variant.ALT[0]) != 1):
+            continue
+        if n >= len(pos_buf):
+            new_size = len(pos_buf) * 2
+            pos_buf = np.resize(pos_buf, new_size)
+            gts_buf = np.resize(gts_buf, (new_size, n_samples))
+        pos_buf[n] = variant.POS
+        gts_buf[n] = variant.gt_types[sample_indices]
+        n += 1
+
+    vcf.close()
+    if n == 0:
+        return None, None
+    return pos_buf[:n].copy(), gts_buf[:n].copy()
 
 
-def recode_missing(sample_ls, df):
+def stream_chromosomes(vcf_path, sample_names, threads=1):
     """
-    If multiallelic sites present, recode as ".." unknown
+    Generator yielding (chrom, pos_array, gts_matrix) for each chromosome.
+    gts_matrix shape: (n_variants, n_samples), dtype uint8
+    Encoding: 0=HOM_REF, 1=HET, 2=UNKNOWN, 3=HOM_ALT  (cyvcf2 gt_types)
+    Only biallelic SNPs are yielded.
     """
-    df = df.with_columns(
-        pl.col(sample_ls).fill_null("..")
+    from cyvcf2 import VCF
+    vcf = VCF(vcf_path, strict_gt=False, threads=threads)
+    vcf_samples = vcf.samples
+    try:
+        sample_indices = np.array([vcf_samples.index(s) for s in sample_names])
+    except ValueError as e:
+        raise ValueError(f"Sample not found in VCF: {e}")
+
+    n_samples = len(sample_indices)
+    _BUF = 131_072  # initial per-chromosome row buffer
+
+    current_chrom = None
+    pos_buf = None
+    gts_buf = None
+    n = 0
+    total_variants = 0
+    biallelic_count = 0
+
+    def _flush(chrom, pos_b, gts_b, count):
+        return (chrom,
+                pos_b[:count].copy(),
+                gts_b[:count].copy())
+
+    print("streaming vcf", flush=True)
+    for variant in vcf:
+        total_variants += 1
+        if (len(variant.REF) != 1 or len(variant.ALT) != 1
+                or len(variant.ALT[0]) != 1):
+            continue
+        biallelic_count += 1
+
+        chrom = variant.CHROM
+        if chrom != current_chrom:
+            if current_chrom is not None:
+                yield _flush(current_chrom, pos_buf, gts_buf, n)
+            current_chrom = chrom
+            pos_buf = np.empty(_BUF, dtype=np.int32)
+            gts_buf = np.empty((_BUF, n_samples), dtype=np.uint8)
+            n = 0
+            print(f"  chromosome: {chrom}", flush=True)
+
+        if n >= len(pos_buf):
+            new_size = len(pos_buf) * 2
+            pos_buf = np.resize(pos_buf, new_size)
+            gts_buf = np.resize(gts_buf, (new_size, n_samples))
+
+        pos_buf[n] = variant.POS
+        gts_buf[n] = variant.gt_types[sample_indices]
+        n += 1
+
+    if current_chrom is not None:
+        yield _flush(current_chrom, pos_buf, gts_buf, n)
+
+    vcf.close()
+    print(f"{total_variants} total variants, {biallelic_count} biallelic SNPs",
+          flush=True)
+
+
+def compute_mier(f1_col, p1_col, p2_col):
+    """
+    Vectorised MIER for one trio. All inputs are uint8 numpy arrays.
+    Returns int8 array: 1=CORRECT, 2=INCORRECT, 3=MISSING
+    """
+    missing = (f1_col == UNKNOWN) | (p1_col == UNKNOWN) | (p2_col == UNKNOWN)
+    correct = (
+        ((f1_col == HOM_REF) & (p1_col != HOM_ALT) & (p2_col != HOM_ALT)) |
+        ((f1_col == HET) &
+         ~((p1_col == HOM_REF) & (p2_col == HOM_REF)) &
+         ~((p1_col == HOM_ALT) & (p2_col == HOM_ALT))) |
+        ((f1_col == HOM_ALT) & (p1_col != HOM_REF) & (p2_col != HOM_REF))
     )
-    return df
-
-
-def parental_trios(args, sample_ls, df, named_f1_dt):
-    """
-    Create new MIER column per-sample that is 1 (pass), 2 (fail), or 3
-    (unknown).
-    """
-    print("analyzing parental trios")
-    mier_ls = []
-
-    with open(os.path.join(args.outdir,"MIER_summary.tsv"), "w") as o:
-        o.write(f"f1\tcorrect\tincorrect\tunknown\tcorrect_known\tcorrect_total\n")
-        for f1, (p1, p2) in named_f1_dt.items():
-            new_col = f"MIER_{f1}"
-            mier_ls.append(new_col)
-            sample_ls.append(new_col)
-
-            df = df.with_columns(
-                pl.when((df[f1].str.contains(r"\.")) | (df[p1].str.contains(r"\.")) | (df[p2].str.contains(r"\."))).then(3)
-                .when((df[f1] == "0") & (df[p1] != "2") & (df[p2] != "2")).then(1)
-                .when((df[f1] == "1") & ~((df[p1] == "0") & (df[p2] == "0")) & ~((df[p1] == "2") & (df[p2] == "2"))).then(1)
-                .when((df[f1] == "2") & (df[p1] != "0") & (df[p2] != "0")).then(1)
-                .otherwise(2)
-                .alias(new_col)
-            )
-            correct = df.filter(pl.col(new_col) == 1).height
-            incorrect = df.filter(pl.col(new_col) == 2).height
-            unknown = df.filter(pl.col(new_col) == 3).height
-
-            o.write(f"{f1}\t{correct}\t{incorrect}\t{unknown}\t{(correct/(correct+incorrect)):.3f}\t{(correct/(correct+incorrect+unknown)):.3f}\n")
-
-    return df, mier_ls
-
-
-def homozygous_parents(args, df, named_f1_dt):
-    """
-    Create new MIER column per-sample that is 1 (pass), 2 (fail), or 3
-    (unknown).
-    """
-    print("analyzing parental trios with homozygous founder calls")
-
-    with open(os.path.join(args.outdir,"MIER_summary_homozygous_parents.tsv"), "w") as o:
-        o.write(f"f1\tcorrect\tincorrect\tunknown\tcorrect_known\tcorrect_total\n")
-        for f1, (p1, p2) in named_f1_dt.items():
-            new_col = f"MIER_{f1}"
-
-            df_hom = df.filter(
-                ((pl.col(p1) == "0") & (pl.col(p2) == "2")) |
-                ((pl.col(p2) == "0") & (pl.col(p1) == "2"))
-            )
-
-            df_hom = df_hom.with_columns(
-                pl.when((df_hom[f1].str.contains(r"\.")) | (df_hom[p1].str.contains(r"\.")) | (df_hom[p2].str.contains(r"\."))).then(3)
-                .when((df_hom[f1] == "0") & (df_hom[p1] != "2") & (df_hom[p2] != "2")).then(1)
-                .when((df_hom[f1] == "1") & ~((df_hom[p1] == "0") & (df_hom[p2] == "0")) & ~((df_hom[p1] == "2") & (df_hom[p2] == "2"))).then(1)
-                .when((df_hom[f1] == "2") & (df_hom[p1] != "0") & (df_hom[p2] != "0")).then(1)
-                .otherwise(2)
-                .alias(new_col)
-            )
-            correct = df_hom.filter(pl.col(new_col) == 1).height
-            incorrect = df_hom.filter(pl.col(new_col) == 2).height
-            unknown = df_hom.filter(pl.col(new_col) == 3).height
-
-            o.write(f"{f1}\t{correct}\t{incorrect}\t{unknown}\t{(correct/(correct+incorrect)):.3f}\t{(correct/(correct+incorrect+unknown)):.3f}\n")
-
-
-def stitch_coords(df, df_coords):
-    df = pl.concat([df_coords, df], how="horizontal")
-    return df
-
-
-def write_outfile(args, df_coords, f):
-    """
-    Write a vcf of the input vcf file coords with only the relevant
-    MIER correct variants present based on filtering threshold.
-    """
-    # og_df = pl.read_csv(args.vcf,
-                        # separator="\t",
-                        # comment_prefix="##")
-    # og_df = og_df.join(df_coords, on=["#CHROM", "POS"], how="semi")
-    og_lf = pl.scan_csv(args.vcf,
-                        separator="\t",
-                        comment_prefix="##")
-    og_lf = og_lf.join(df_coords, on=["#CHROM", "POS"], how="semi")
-    og_df = og_lf.collect()
-
-    args.outfile = os.path.join(args.outdir, "MIER_filtered.vcf")
-
-    print("writing header")
-    with open(args.outfile, "w") as o:
-        for line in f:
-            if line.startswith("##"):
-                o.write(line)
-            else:
-                o.write(f"## BLOCKHEAD MIER threshold : {args.threshold} ; non_missing : {args.non_missing}\n")
-                break
-
-    print(f"writing {og_df.shape[0]} variants")
-    with open(args.outfile, "a") as o:
-        og_df.write_csv(o, separator='\t')
-
-
-def haplotype_per_cross(args, adv_ls, named_f1_dt, df):
-    """
-    Iterate one scaffold at a time to see the calls that likely were
-    contributed by each original parental cross (p1/p2).
-
-    - [x] filter to p1/p2 == 0/2 or 2/0
-    - [x] filter to f1 mier correct
-    - [x] filter to p3 homozygous
-    """
-
-    alpha_val = 0.5
-    chrom_ls = sorted(df["#CHROM"].unique().to_list())
-    colors_dt = haplotype_colors(args)
-
-    if args.smooth:
-        out_block_df = pl.DataFrame()
-
-    if args.assess:
-        truth_df = pl.read_csv(args.assess, has_header=True, separator="\t")
-        out_wrong_df = pl.DataFrame()
-
-    for chrom in chrom_ls:
-
-        if args.smooth:
-            recomb_ls = []
-
-        # filter to a single chromosome
-        print(f"subsetting {chrom}")
-        chrom_df = df.filter(
-            (df["#CHROM"] == chrom)
-        )
-
-        fig, axes = plt.subplots(nrows=len(adv_ls), ncols=3, sharex='col', figsize=(32, len(adv_ls)/3), gridspec_kw={'hspace': 0.3, 'width_ratios': [90, 1, 1], 'wspace': 0.03})
-
-        max_pos = chrom_df.select(pl.col("POS").max()).item()
-        x_ticks = [i for i in range(0, max_pos, 5000000)]
-        tick_labels = [f'{x/1e6:.0f}Mb' if x != 0 else '0' for x in x_ticks]
-
-        for idx, adv in enumerate(adv_ls):
-            print(f"processing advanced hybrid : {adv}")
-
-            lin_dt = get_advanced_lineage(adv, named_f1_dt)
-            tmp_df = infer_haplotypes(adv, named_f1_dt, chrom_df, lin_dt)
-
-            # Create a plot.
-            x = tmp_df["POS"].to_list()
-            y = tmp_df["parent_origin"].to_list()
-
-            if args.smooth:
-                s = [0 if i == lin_dt["p1"] else 2 for i in y]
-                s_new = median_filter(s, args.smooth) #TODO
-                y_new = [lin_dt["p1"] if i == 0 else lin_dt["p2"] for i in s_new]
-                process_diffs(x, y, y_new)
-                recomb_ls += break_points(x, y_new)
-                colors = [colors_dt[id] for id in y_new]
-                smooth_df = pl.DataFrame({
-                    "CHROM": chrom,
-                    "POS": x,
-                    adv: y_new
-                })
-                if idx == 0:
-                    block_df = smooth_df
-                else:
-                    block_df = block_df.join(smooth_df, on=["CHROM", "POS"], how="outer", coalesce=True)
-            else:
-                colors = [colors_dt[id] for id in y]
-
-            if args.assess:
-                adv_truth_df = truth_df.filter(pl.col(adv).is_not_null())
-                adv_truth_df = adv_truth_df.sort(["CHROM", "POS"])
-                truth_x = adv_truth_df.filter(pl.col("CHROM") == chrom)["POS"].to_list()
-                truth_y = adv_truth_df.filter(pl.col("CHROM") == chrom)[adv].to_list()
-
-                new_x, new_y = assess_blocks(x, y, truth_x, truth_y)
-
-                assess_df = pl.DataFrame({
-                    "CHROM": chrom,
-                    "POS": new_x,
-                    adv: new_y
-                })
-                if idx == 0:
-                    wrong_df = chrom_df.select(["#CHROM", "POS"])
-                    wrong_df = wrong_df.rename({"#CHROM": "CHROM"})
-                wrong_df = wrong_df.join(assess_df, on=["CHROM", "POS"], how="left")
-
-            y = [0 for i in x]
-
-            axes[idx, 0].scatter(x, y, s=500, marker="|", c=colors, alpha=alpha_val)
-            axes[idx, 0].set_yticks([])
-            axes[idx, 0].set_ylabel(f"{adv}", labelpad=100, va="center", ha="left", rotation=0)
-            axes[idx, 1].set_facecolor(colors_dt[lin_dt["f1"]])
-            axes[idx, 2].set_facecolor(colors_dt[lin_dt["p3"]])
-
-        # remove ticks and labels for the f1/p3 labels 
-        for idx, i in enumerate(adv_ls):
-            axes[idx, 1].set_yticklabels([])
-            axes[idx, 1].set_yticks([])
-            axes[idx, 1].set_xticklabels([])
-            axes[idx, 1].set_xticks([])
-            axes[idx, 2].set_yticklabels([])
-            axes[idx, 2].set_yticks([])
-            axes[idx, 2].set_xticklabels([])
-            axes[idx, 2].set_xticks([])
-
-        # remove the whitespace on the x axis that matplotlib defaults to
-        for ax in axes:
-           ax[0].autoscale(enable=True, axis='x', tight=True)
-
-        axes[0, 0].set_title(f"{chrom}", pad=20)
-        axes[0, 1].set_title("F1", pad=20)
-        axes[0, 2].set_title("P3", pad=20)
-
-        # add x axis tick labels
-        axes[-1, 0].set_xticks(x_ticks)
-        axes[-1, 0].set_xticklabels(tick_labels)
-
-        if not args.smooth:
-            img_path = os.path.join(args.outdir, f"{chrom}_{len(adv_ls)}_haplotypes.png")
-            print(f"saving image to {img_path}")
-            plt.savefig(img_path, dpi=300, bbox_inches="tight")
-        else:
-            img_path = os.path.join(args.outdir, f"{chrom}_{len(adv_ls)}_haplotypes_smooth.png")
-            print(f"saving image to {img_path}")
-            plt.savefig(img_path, dpi=300, bbox_inches="tight")
-
-            img_path = os.path.join(args.outdir, f"{chrom}_{len(adv_ls)}_haplotypes_breaks.png")
-            # Squish the subplots to the bottom 80%.
-            fig.subplots_adjust(top=0.8)
-            pos = axes[0,0].get_position()
-            hist_ax = fig.add_axes([pos.x0, pos.y0 + pos.height * 1.05, pos.width, 0.15])
-            bin_no = int(max_pos//1e6) * 2
-            hist_ax.hist(recomb_ls, bins=bin_no, range=(0, max_pos), color="grey")
-            hist_ax.xaxis.set_visible(False)
-            hist_ax.margins(x=0)
-            print(f"saving image to {img_path}")
-            hist_ax.set_title(f"{chrom}", pad=20)
-            plt.savefig(img_path, dpi=300, bbox_inches="tight")
-            out_block_df = pl.concat([out_block_df, block_df])
-
-        if args.assess:
-            out_wrong_df = pl.concat([out_wrong_df, wrong_df])
-
-    if args.smooth:
-        out_block_df.write_csv(os.path.join(args.outdir, f"{len(adv_ls)}_haplotypes_{args.smooth}_smooth_blocks.tsv"), separator="\t", include_header=True)
-
-    if args.assess:
-        out_wrong_df = out_wrong_df.filter(
-            pl.any_horizontal([pl.col(c).is_not_null() for c in adv_ls])
-        )
-        out_wrong_df.write_csv(os.path.join(args.outdir, f"{len(adv_ls)}_haplotypes_assess_blocks.tsv"), separator="\t", include_header=True)
+    return np.where(missing, MIER_MISSING,
+                    np.where(correct, MIER_CORRECT, MIER_INCORRECT)).astype(np.int8)
 
 
 def haplotype_colors(args):
     if args.colors:
-        colors_df = pl.read_csv(args.colors, separator="\t", has_header=False, new_columns=["id", "color"])
-        colors_dt = dict(zip(colors_df["id"], colors_df["color"]))
+        colors_df = pl.read_csv(args.colors, separator="\t", has_header=False,
+                                new_columns=["id", "color"])
+        return dict(zip(colors_df["id"], colors_df["color"]))
+    return {}
+
+
+def infer_haplotypes(pos_arr, gts_matrix, sample_idx_in_matrix, mier_dict, lin_dt):
+    """
+    Filter to sites where p1/p2 are homozygous-opposite and p3 is homozygous,
+    keeping only MIER-correct calls.  Returns (pos_filtered, parent_origin) as
+    numpy arrays.  All operations are vectorised numpy — no DataFrame is built.
+    Integer encoding: HOM_REF=0, HET=1, UNKNOWN=2, HOM_ALT=3
+    """
+    p1_col  = gts_matrix[:, sample_idx_in_matrix[lin_dt["p1"]]]
+    p2_col  = gts_matrix[:, sample_idx_in_matrix[lin_dt["p2"]]]
+    p3_col  = gts_matrix[:, sample_idx_in_matrix[lin_dt["p3"]]]
+    adv_col = gts_matrix[:, sample_idx_in_matrix[lin_dt["adv"]]]
+    mier_f1  = mier_dict[lin_dt["f1"]]
+    mier_adv = mier_dict[lin_dt["adv"]]
+
+    mask = (
+        (((p1_col == HOM_REF) & (p2_col == HOM_ALT)) |
+         ((p1_col == HOM_ALT) & (p2_col == HOM_REF))) &
+        (mier_f1  == MIER_CORRECT) &
+        (mier_adv == MIER_CORRECT) &
+        ((p3_col == HOM_REF) | (p3_col == HOM_ALT))
+    )
+
+    pos_f  = pos_arr[mask]
+    adv_f  = adv_col[mask]
+    p1_f   = p1_col[mask]
+    p2_f   = p2_col[mask]
+    p3_f   = p3_col[mask]
+
+    # Infer which grandparent genotype the adv allele matches
+    parent_type = np.full(len(pos_f), 99, dtype=np.int8)
+    parent_type[(adv_f == HOM_REF) & (p3_f == HOM_REF)] = HOM_REF
+    parent_type[(adv_f == HET)     & (p3_f == HOM_REF)] = HOM_ALT
+    parent_type[(adv_f == HET)     & (p3_f == HOM_ALT)] = HOM_REF
+    parent_type[(adv_f == HOM_ALT) & (p3_f == HOM_ALT)] = HOM_ALT
+
+    parent_origin = np.where(parent_type == p1_f, lin_dt["p1"],
+                    np.where(parent_type == p2_f, lin_dt["p2"], "unknown"))
+
+    return pos_f, parent_origin
+
+
+def compute_hap_data(adv_ls, named_f1_dt, pos_arr, gts_matrix,
+                     sample_idx_in_matrix, mier_dict):
+    """
+    Worker-safe: run infer_haplotypes for every adv on one chromosome.
+    No matplotlib, no Polars, no large string arrays cross the IPC boundary.
+
+    Returns a dict:
+      {
+        'max_pos':     int,
+        'adv_results': [(adv, lin_dt, pos_f, parent_int8), ...]
+      }
+    where parent_int8 is an int8 array with values 0=p1, 1=p2, 2=unknown.
+    """
+    adv_results = []
+    for adv in adv_ls:
+        lin_dt = get_advanced_lineage(adv, named_f1_dt)
+        pos_f, parent_origin = infer_haplotypes(
+            pos_arr, gts_matrix, sample_idx_in_matrix, mier_dict, lin_dt)
+        parent_int8 = np.full(len(pos_f), 2, dtype=np.int8)
+        parent_int8[parent_origin == lin_dt["p1"]] = 0
+        parent_int8[parent_origin == lin_dt["p2"]] = 1
+        adv_results.append((adv, lin_dt, pos_f, parent_int8))
+
+    return {
+        'max_pos':     int(pos_arr.max()) if len(pos_arr) > 0 else 0,
+        'adv_results': adv_results,
+    }
+
+
+def plot_haplotypes(args, adv_ls, named_f1_dt, chrom, hap_data,
+                    colors_dt, truth_df=None):
+    """
+    Main-process only: matplotlib + smooth/assess.  Receives compact hap_data
+    dict produced by compute_hap_data() (or built inline in sequential mode).
+    Returns (block_df_chrom, wrong_df_chrom); either may be None.
+    """
+    alpha_val = 0.5
+    recomb_ls = []
+
+    fig, axes = plt.subplots(
+        nrows=len(adv_ls), ncols=3, sharex='col',
+        figsize=(32, len(adv_ls) / 3),
+        gridspec_kw={'hspace': 0.3, 'width_ratios': [90, 1, 1], 'wspace': 0.03},
+        squeeze=False,
+    )
+
+    max_pos = hap_data['max_pos']
+    x_ticks = list(range(0, max_pos, 5_000_000))
+    tick_labels = [f'{x/1e6:.0f}Mb' if x != 0 else '0' for x in x_ticks]
+
+    block_df_chrom = None
+    wrong_df_chrom = None
+
+    from matplotlib.colors import to_rgba
+    rgba_cache = {name: to_rgba(col) for name, col in colors_dt.items()}
+
+    for idx, (adv, lin_dt, pos_f, parent_int8) in enumerate(hap_data['adv_results']):
+        print(f"  processing advanced hybrid: {adv}", flush=True)
+
+        # Reconstruct string parent_origin from compact int8
+        parent_origin = np.where(parent_int8 == 0, lin_dt["p1"],
+                        np.where(parent_int8 == 1, lin_dt["p2"], "unknown"))
+
+        if args.smooth:
+            s_arr     = np.where(parent_origin == lin_dt["p1"], 0, 2)
+            s_new     = median_filter(s_arr, args.smooth)
+            y_new_arr = np.where(s_new == 0, lin_dt["p1"], lin_dt["p2"])
+            process_diffs(pos_f, parent_origin, y_new_arr)
+            recomb_ls += break_points(pos_f, y_new_arr)
+            label_arr, c1, c2 = y_new_arr, rgba_cache[lin_dt["p1"]], rgba_cache[lin_dt["p2"]]
+            plot_x = pos_f
+        else:
+            label_arr, c1, c2 = parent_origin, rgba_cache[lin_dt["p1"]], rgba_cache[lin_dt["p2"]]
+            plot_x = pos_f
+
+        y_zeros = np.zeros(len(plot_x), dtype=np.float32)
+        mask_p1 = (label_arr == lin_dt["p1"])
+        for sel, col_val in ((mask_p1, c1), (~mask_p1, c2)):
+            if sel.any():
+                axes[idx, 0].scatter(plot_x[sel], y_zeros[sel], s=500, marker="|",
+                                     color=col_val, alpha=alpha_val, rasterized=True)
+        axes[idx, 0].set_yticks([])
+        axes[idx, 0].set_ylabel(f"{adv}", labelpad=100, va="center", ha="left", rotation=0)
+        axes[idx, 1].set_facecolor(colors_dt[lin_dt["f1"]])
+        axes[idx, 2].set_facecolor(colors_dt[lin_dt["p3"]])
+
+    for idx in range(len(adv_ls)):
+        for col in (1, 2):
+            axes[idx, col].set_yticklabels([])
+            axes[idx, col].set_yticks([])
+            axes[idx, col].set_xticklabels([])
+            axes[idx, col].set_xticks([])
+
+    for ax in axes:
+        ax[0].autoscale(enable=True, axis='x', tight=True)
+
+    axes[0, 0].set_title(f"{chrom}", pad=20)
+    axes[0, 1].set_title("F1", pad=20)
+    axes[0, 2].set_title("P3", pad=20)
+    axes[-1, 0].set_xticks(x_ticks)
+    axes[-1, 0].set_xticklabels(tick_labels)
+
+    if not args.smooth:
+        img_path = os.path.join(args.outdir, f"{chrom}_{len(adv_ls)}_haplotypes.png")
+        print(f"  saving {img_path}", flush=True)
+        plt.savefig(img_path, dpi=300, bbox_inches="tight")
     else:
-        colors_dt = {}
+        img_path = os.path.join(args.outdir, f"{chrom}_{len(adv_ls)}_haplotypes_smooth.png")
+        print(f"  saving {img_path}", flush=True)
+        plt.savefig(img_path, dpi=300, bbox_inches="tight")
 
-    return colors_dt
+        img_path = os.path.join(args.outdir, f"{chrom}_{len(adv_ls)}_haplotypes_breaks.png")
+        fig.subplots_adjust(top=0.8)
+        pos0 = axes[0, 0].get_position()
+        hist_ax = fig.add_axes(
+            [pos0.x0, pos0.y0 + pos0.height * 1.05, pos0.width, 0.15])
+        bin_no = int(max_pos // 1e6) * 2
+        hist_ax.hist(recomb_ls, bins=bin_no, range=(0, max_pos), color="grey")
+        hist_ax.xaxis.set_visible(False)
+        hist_ax.margins(x=0)
+        hist_ax.set_title(f"{chrom}", pad=20)
+        print(f"  saving {img_path}", flush=True)
+        plt.savefig(img_path, dpi=300, bbox_inches="tight")
+
+    plt.close(fig)
 
 
-def infer_haplotypes(adv, named_f1_dt, chrom_df, lin_dt):
+def build_block_dfs(args, adv_ls, named_f1_dt, chrom, hap_data, truth_df=None):
     """
-    Filter to the sites where p1/p2 are homozygous opposite and p3 is
-    homozygous, keeping only MIER correct calls along the way.
-
-    Create new binary column called parent_type based on lineage.
-
-    adv p3  parent_type
-    --- --  ------
-    0   0   0
-    1   0   2
-    1   2   0
-    2   2   2
-
-    Finally, create new column called parent_origin. This connects the
-    parent_type with the origin parent.
+    Build smooth and/or assess DataFrames in the main process from hap_data.
+    Called after plot workers finish so no large data crosses the IPC pipe.
+    The smooth/assess numpy ops are fast; recomputing them here is cheap.
+    Returns (block_df_chrom, wrong_df_chrom); either may be None.
     """
-    # filter to p1/p2 0/2 or 2/0
-    tmp_df = chrom_df.filter(
-        ((chrom_df[lin_dt["p1"]] == "0") & (chrom_df[lin_dt["p2"]] == "2")) | \
-        ((chrom_df[lin_dt["p1"]] == "2") & (chrom_df[lin_dt["p2"]] == "0"))
-    )
+    smooth_collected = []
+    assess_collected = []
 
-    # filter to f1 MIER correct (note, 1 here is not genotype)
-    tmp_df = tmp_df.filter(
-        (tmp_df[f"MIER_{lin_dt["f1"]}"] == "1")
-    )
+    for adv, lin_dt, pos_f, parent_int8 in hap_data['adv_results']:
+        parent_origin = np.where(parent_int8 == 0, lin_dt["p1"],
+                        np.where(parent_int8 == 1, lin_dt["p2"], "unknown"))
 
-    # filter to adv MIER correct (note, 1 here is not genotype)
-    tmp_df = tmp_df.filter(
-        (tmp_df[f"MIER_{lin_dt["adv"]}"] == "1")
-    )
+        if args.smooth:
+            s_arr     = np.where(parent_origin == lin_dt["p1"], 0, 2)
+            s_new     = median_filter(s_arr, args.smooth)
+            y_new_arr = np.where(s_new == 0, lin_dt["p1"], lin_dt["p2"])
+            smooth_collected.append((pos_f, y_new_arr, adv))
 
-    # filter to p3 homozygous
-    tmp_df = tmp_df.filter(
-        (tmp_df[lin_dt["p3"]] == "0") | \
-        (tmp_df[lin_dt["p3"]] == "2")
-    )
+        if args.assess and truth_df is not None:
+            x = pos_f.tolist()
+            y = parent_origin.tolist()
+            adv_truth_df = truth_df.filter(pl.col(adv).is_not_null()).sort(["CHROM", "POS"])
+            truth_x = adv_truth_df.filter(pl.col("CHROM") == chrom)["POS"].to_list()
+            truth_y = adv_truth_df.filter(pl.col("CHROM") == chrom)[adv].to_list()
+            new_x, new_y = assess_blocks(x, y, truth_x, truth_y)
+            assess_collected.append((np.asarray(new_x), np.asarray(new_y), adv))
 
-    tmp_df = tmp_df.with_columns(
-        pl.when((tmp_df[lin_dt["adv"]] == "0") & (tmp_df[lin_dt["p3"]] == "0")).then(pl.lit("0"))
-          .when((tmp_df[lin_dt["adv"]] == "1") & (tmp_df[lin_dt["p3"]] == "0")).then(pl.lit("2"))
-          .when((tmp_df[lin_dt["adv"]] == "1") & (tmp_df[lin_dt["p3"]] == "2")).then(pl.lit("0"))
-          .when((tmp_df[lin_dt["adv"]] == "2") & (tmp_df[lin_dt["p3"]] == "2")).then(pl.lit("2"))
-          .otherwise(pl.lit("99"))
-          .alias("parent_type")
-    )
+    block_df_chrom = None
+    wrong_df_chrom = None
 
-    tmp_df = tmp_df.with_columns(
-        pl.when((tmp_df["parent_type"] == tmp_df[lin_dt["p1"]])).then(pl.lit(lin_dt["p1"]))
-          .when((tmp_df["parent_type"] == tmp_df[lin_dt["p2"]])).then(pl.lit(lin_dt["p2"]))
-          .otherwise(99)
-          .alias("parent_origin")
-    )
+    if smooth_collected:
+        from functools import reduce
+        dfs = [
+            pl.DataFrame({"POS": pl.Series("POS", pos_c),
+                          adv_c: pl.Series(adv_c, y_c.tolist())})
+            for pos_c, y_c, adv_c in smooth_collected
+        ]
+        merged = reduce(
+            lambda a, b: a.join(b, on="POS", how="outer", coalesce=True), dfs)
+        block_df_chrom = merged.with_columns(pl.lit(chrom).alias("CHROM")) \
+                               .select(["CHROM", "POS"] + [c[2] for c in smooth_collected]) \
+                               .sort("POS")
 
-    keep_cols = ["POS", "parent_origin"] + [v for k, v in lin_dt.items()]
+    if assess_collected:
+        from functools import reduce
+        dfs = [
+            pl.DataFrame({"POS": pl.Series("POS", x_c.astype(np.int32)),
+                          adv_c: pl.Series(adv_c, y_c.tolist())})
+            for x_c, y_c, adv_c in assess_collected
+        ]
+        merged = reduce(
+            lambda a, b: a.join(b, on="POS", how="outer", coalesce=True), dfs)
+        wrong_df_chrom = merged.with_columns(pl.lit(chrom).alias("CHROM")) \
+                               .select(["CHROM", "POS"] + [c[2] for c in assess_collected]) \
+                               .sort("POS")
 
-    tmp_df = tmp_df.select(keep_cols)
+    return block_df_chrom, wrong_df_chrom
 
-    tmp_df = tmp_df.with_columns(
-        pl.col("parent_origin").cast(pl.Categorical).to_physical().alias("parent_cats")
-    )
 
-    return tmp_df
+def write_filtered_vcf(args, passing_positions):
+    """Second streaming pass: write variants at passing (chrom, pos) positions."""
+    from cyvcf2 import VCF, Writer
+    vcf_in = VCF(args.vcf, strict_gt=False)
+    out_path = os.path.join(args.outdir, "MIER_filtered.vcf")
+    vcf_out = Writer(out_path, vcf_in)
+    written = 0
+    for variant in vcf_in:
+        if (variant.CHROM, variant.POS) in passing_positions:
+            vcf_out.write_record(variant)
+            written += 1
+    vcf_out.close()
+    vcf_in.close()
+    print(f"wrote {written} filtered variants to {out_path}", flush=True)
 
+
+# ---------------------------------------------------------------------------
+# Smoothing and assessment
+# ---------------------------------------------------------------------------
 
 def median_filter(s, r):
     """
-    Extend r SNPs in either direction of target locus and use the median
-    identity to update the current prediction.
+    Sliding-window median filter over a list of 0/2 values.  Because the
+    only possible values are 0 and 2, the median reduces to a majority vote
+    computable from a cumulative sum in O(1) per position — no per-element
+    Python list slicing or statistics.median() call required.
 
-    If particularly close to the ends of the range, use a hard-coded
-    end_dist to define a distal number of SNPs that are assumed to not
-    change identity. between end_dist and r SNPs away from endpoints,
-    use a symmetrical distance from target to the end such that the
-    range extending outward is always the same on both sides of the
-    target.
+    Window-boundary rules are identical to the original implementation:
+      - very close to ends (< end_dist):  fixed small window
+      - near ends (< r):                  growing/shrinking symmetric window
+      - interior:                         full window of width 2r+1
+    A tie (equal counts of 0 and 2) keeps the original value, matching the
+    original `med == 1` branch.
     """
-    end_dist = round(r/10)
-    s_len = len(s)
-    s_new = [i for i in s]
+    n = len(s)
+    if n == 0:
+        return s
+    end_dist = round(r / 10)
 
-    for idx, i in enumerate(s):
-        if idx < end_dist:
-            begin = 0
-            end = end_dist + 1
-        elif idx < r:
-            begin = 0
-            end = 2*idx + 1
-        elif idx + end_dist >= s_len:
-            begin = s_len - end_dist
-            end = s_len
-        elif idx + r >= s_len:
-            begin = idx - (s_len - idx) + 1
-            end = s_len
-        else:
-            begin = idx - r
-            end = idx + r + 1
+    s_arr = np.asarray(s, dtype=np.int32)
 
-        med = statistics.median(s[begin:end])
-        if med == 1:
-            med = i
-        else:
-            med = int(med)
-        s_new[idx] = med
+    # Prefix sum for O(1) window-sum queries: cum[i+1] - cum[i] = s_arr[i]
+    cum = np.empty(n + 1, dtype=np.int64)
+    cum[0] = 0
+    np.cumsum(s_arr, out=cum[1:])
+
+    idx = np.arange(n, dtype=np.int64)
+
+    # Compute begin/end for every index in parallel, honouring the same
+    # if-elif priority as the original.
+    begins = np.where(idx < end_dist,       0,
+             np.where(idx < r,              0,
+             np.where(idx + end_dist >= n,  np.maximum(0, n - end_dist),
+             np.where(idx + r >= n,         idx - (n - idx) + 1,
+                                            idx - r))))
+    ends   = np.where(idx < end_dist,       end_dist + 1,
+             np.where(idx < r,              2 * idx + 1,
+             np.where(idx + end_dist >= n,  n,
+             np.where(idx + r >= n,         n,
+                                            idx + r + 1))))
+
+    begins = np.clip(begins, 0, n).astype(np.int64)
+    ends   = np.clip(ends,   0, n).astype(np.int64)
+
+    win_sums  = cum[ends] - cum[begins]
+    win_sizes = ends - begins
+
+    # majority 2 → 2, majority 0 → 0, tie → keep original
+    s_new = np.where(win_sums > win_sizes, 2,
+            np.where(win_sums < win_sizes, 0, s_arr))
 
     return s_new
 
 
 def process_diffs(x, y, y_new):
-    x_ls = []
-    for i, j, k in zip(y, y_new, x):
-        if i != j:
-            x_ls.append(k)
-    print(f"\tpotentially wrong types: {len(x_ls)}")
+    count = int(np.sum(np.asarray(y) != np.asarray(y_new)))
+    print(f"\tpotentially wrong types: {count}", flush=True)
 
 
 def break_points(x, y):
-    last_type = y[0]
-    break_no = 0
-    break_ls = []
-
-    for idx, (i, j)  in enumerate(zip(y, x)):
-        if idx == 0:
-            continue
-        if i != last_type:
-            break_no += 1
-            break_ls.append(j)
-        last_type = i
-    print(f"\tbreakpoints : {break_no}")
+    y_arr = np.asarray(y)
+    x_arr = np.asarray(x)
+    break_ls = x_arr[1:][y_arr[1:] != y_arr[:-1]].tolist()
+    print(f"\tbreakpoints: {len(break_ls)}", flush=True)
     return break_ls
 
 
 def assess_blocks(x, y, truth_x, truth_y):
     """
-    Iterate truth_x and truth_y and define a start-end range at change
-    point as well as the parental type in this range.
+    For each truth segment (defined by consecutive breakpoints in truth_x/y),
+    find the test variants that fall within that segment and record whether
+    each agrees (0) or disagrees (1) with the truth label.
 
-    At each change point, iterate x and y and when x in above range,
-    record the positions where y agrees/disagrees with type.
+    Uses np.searchsorted for O(log n) segment lookup instead of a Polars
+    filter per breakpoint.  x must be sorted (genomic positions always are).
     """
-    test_df = pl.DataFrame({"x": x, "y": y})
-    new_x = []
-    new_y = []
+    x_arr = np.asarray(x, dtype=np.int64)
+    y_arr = np.asarray(y)
 
-    last_type = truth_y[0]
-    start_type = truth_x[0]
+    new_x, new_y = [], []
+    last_type  = truth_y[0]
+    start_pos  = truth_x[0]
 
-    for idx, (r_x, r_y) in enumerate(zip(truth_x, truth_y)):
-        if idx == 0:
-            continue
-
-        # If a breakpoint is detected, process.
+    for idx in range(1, len(truth_x)):
+        r_x, r_y = truth_x[idx], truth_y[idx]
         if r_y != last_type:
-            end_type = truth_x[idx-1]
-            type_df = test_df.filter(pl.col("x").is_between(start_type, end_type))
-            new_x += type_df["x"].to_list()
-            new_y += [0 if i == last_type else 1 for i in type_df["y"].to_list()]
-            start_type = r_x
-
+            end_pos = truth_x[idx - 1]
+            lo = np.searchsorted(x_arr, start_pos, side='left')
+            hi = np.searchsorted(x_arr, end_pos,   side='right')
+            seg_x = x_arr[lo:hi]
+            seg_y = y_arr[lo:hi]
+            new_x.extend(seg_x.tolist())
+            new_y.extend((seg_y != last_type).astype(int).tolist())
+            start_pos = r_x
         last_type = r_y
 
-    end_type = truth_x[-1]
-    type_df = test_df.filter(pl.col("x").is_between(start_type, end_type))
-    new_x += type_df["x"].to_list()
-    new_y += [0 if i == last_type else 1 for i in type_df["y"].to_list()]
+    lo = np.searchsorted(x_arr, start_pos,    side='left')
+    hi = np.searchsorted(x_arr, truth_x[-1],  side='right')
+    new_x.extend(x_arr[lo:hi].tolist())
+    new_y.extend((y_arr[lo:hi] != last_type).astype(int).tolist())
 
     return new_x, new_y
-
-
-# HERE BE DRAGONS (not cool ones, either)
-def median_filter_new(df, r, s):
-    x_ls = df["x"].to_list()
-    max_x = max(x_ls)
-    s = df["s"].to_list()
-    s_new = [i for i in s]
-
-    for idx, x in enumerate(x_ls):
-        b = x - r
-        e = x + r
-
-        if b <= 0 or e >= max_x:
-            continue
-
-        bef = df.filter(pl.col("x").is_between(b, x-1))["s"].to_list()
-        aft = df.filter(pl.col("x").is_between(x+1, e))["s"].to_list()
-
-        if not bef or not aft:
-            continue
-
-        if len(bef) > len(aft):
-            bef = random.sample(bef, len(aft))
-        elif len(aft) > len(bef):
-            aft = random.sample(aft, len(bef))
-
-        med = statistics.median(bef+aft)
-
-        if med == 0.5:
-            med = s[idx]
-        else:
-            med = int(med)
-
-        s_new[idx] = med
-
-    s_new = ["green" if i == 2 else "orange" for i in s_new]
-    return s_new
-
-
-def adaptive_smoothing_kernel(x, y, bandwidth):
-    max_distance = bandwidth * 2
-
-    x = np.array(x)
-    y = np.array(y)
-    n = len(x)
-    smoothed = np.zeros_like(y, dtype=float)
-
-    # Sort data by x
-    sort_idx = np.argsort(x)
-    x_sorted = x[sort_idx]
-    y_sorted = y[sort_idx]
-
-    for i in range(n):
-        # Binary search for window boundaries
-        left_bound = x_sorted[i] - max_distance
-        right_bound = x_sorted[i] + max_distance
-
-        left_idx = np.searchsorted(x_sorted, left_bound, side='left')
-        right_idx = np.searchsorted(x_sorted, right_bound, side='right')
-
-        # Get points in window
-        x_window = x_sorted[left_idx:right_idx]
-        y_window = y_sorted[left_idx:right_idx]
-
-        # Calculate distances and weights
-        distances = np.abs(x_window - x_sorted[i])
-        weights = np.exp(-distances**2 / (2 * bandwidth**2))
-
-        # Weighted average
-        smoothed[i] = np.sum(weights * y_window) / np.sum(weights)
-
-    smoothed = ["green" if i >= 0.5 else "orange" for i in smoothed]
-
-    return smoothed
-

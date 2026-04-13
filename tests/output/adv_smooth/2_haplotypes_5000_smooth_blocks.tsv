@@ -132,6 +132,8 @@ Scaffold_01	33639	b_b
 Scaffold_01	33881	b_b	a_a
 Scaffold_01	33891	b_b	a_a
 Scaffold_01	33931	b_b	a_a
+Scaffold_01	34290		a_a
+Scaffold_01	34347		a_a
 Scaffold_01	35783	b_b	a_a
 Scaffold_01	35792	b_b	a_a
 Scaffold_01	35854	b_b	a_a
@@ -157,6 +159,7 @@ Scaffold_01	40452	b_b	a_a
 Scaffold_01	40565	b_b	a_a
 Scaffold_01	40649	b_b	a_a
 Scaffold_01	40699	b_b	a_a
+Scaffold_01	40745		a_a
 Scaffold_01	40770	b_b	a_a
 Scaffold_01	40830	b_b	a_a
 Scaffold_01	40893	b_b	a_a
@@ -252,11 +255,13 @@ Scaffold_01	46474	b_b	a_a
 Scaffold_01	46890	b_b	a_a
 Scaffold_01	47236	b_b	a_a
 Scaffold_01	47555	b_b	a_a
+Scaffold_01	47755		a_a
 Scaffold_01	48428	b_b	a_a
 Scaffold_01	48562	b_b	
 Scaffold_01	48663	b_b	a_a
 Scaffold_01	48726	b_b	
 Scaffold_01	49798	b_b	a_a
+Scaffold_01	49990		a_a
 Scaffold_01	50177	b_b	a_a
 Scaffold_01	50451	b_b	a_a
 Scaffold_01	50636	b_b	a_a
@@ -274,6 +279,7 @@ Scaffold_01	54546	b_b	a_a
 Scaffold_01	55228	b_b	a_a
 Scaffold_01	55619	b_b	a_a
 Scaffold_01	55787	b_b	a_a
+Scaffold_01	56745		a_a
 Scaffold_01	56793	b_b	
 Scaffold_01	56819	b_b	a_a
 Scaffold_01	57118	b_b	a_a
@@ -333,6 +339,7 @@ Scaffold_01	60885	b_b	a_a
 Scaffold_01	60890	b_b	a_a
 Scaffold_01	62028	b_b	a_a
 Scaffold_01	62039	b_b	a_a
+Scaffold_01	62411		a_a
 Scaffold_01	62423	b_b	a_a
 Scaffold_01	62983	b_b	
 Scaffold_01	63053	b_b	a_a
@@ -358,6 +365,7 @@ Scaffold_01	66513	b_b	a_a
 Scaffold_01	66918	b_b	a_a
 Scaffold_01	66962	b_b	a_a
 Scaffold_01	67718	b_b	a_a
+Scaffold_01	68497		a_a
 Scaffold_01	68779	b_b	a_a
 Scaffold_01	71046	b_b	a_a
 Scaffold_01	71611	b_b	a_a
@@ -385,6 +393,7 @@ Scaffold_01	120371	b_b	a_a
 Scaffold_01	120386	b_b	a_a
 Scaffold_01	120522	b_b	a_a
 Scaffold_01	121144	b_b	a_a
+Scaffold_01	121192		a_a
 Scaffold_01	121326	b_b	a_a
 Scaffold_01	121455	b_b	a_a
 Scaffold_01	121549	b_b	a_a
@@ -397,6 +406,7 @@ Scaffold_01	121970	b_b	a_a
 Scaffold_01	122322	b_b	a_a
 Scaffold_01	122389	b_b	a_a
 Scaffold_01	122402	b_b	a_a
+Scaffold_01	122637		a_a
 Scaffold_01	122844	b_b	a_a
 Scaffold_01	123192	b_b	a_a
 Scaffold_01	123218	b_b	a_a
@@ -412,6 +422,7 @@ Scaffold_01	123656	b_b	a_a
 Scaffold_01	123712	b_b	a_a
 Scaffold_01	123802	b_b	a_a
 Scaffold_01	123974	b_b	a_a
+Scaffold_01	124023		a_a
 Scaffold_01	124440	b_b	a_a
 Scaffold_01	124671	b_b	a_a
 Scaffold_01	124938	b_b	a_a
@@ -428,6 +439,7 @@ Scaffold_01	127304	b_b	a_a
 Scaffold_01	127350	b_b	a_a
 Scaffold_01	127390	b_b	a_a
 Scaffold_01	127417	b_b	a_a
+Scaffold_01	127451		a_a
 Scaffold_01	127775	b_b	a_a
 Scaffold_01	127885	b_b	a_a
 Scaffold_01	127949	b_b	a_a
@@ -896,6 +908,7 @@ Scaffold_01	157770	b_b	a_a
 Scaffold_01	158160	b_b	a_a
 Scaffold_01	158206	b_b	a_a
 Scaffold_01	158221	b_b	a_a
+Scaffold_01	158904		a_a
 Scaffold_01	158986	b_b	a_a
 Scaffold_01	159766	b_b	a_a
 Scaffold_01	159812	b_b	a_a
@@ -992,6 +1005,7 @@ Scaffold_01	166143	b_b	a_a
 Scaffold_01	166168	b_b	a_a
 Scaffold_01	166212	b_b	a_a
 Scaffold_01	166230	b_b	a_a
+Scaffold_01	166263		a_a
 Scaffold_01	166316	b_b	a_a
 Scaffold_01	166332	b_b	a_a
 Scaffold_01	166342	b_b	a_a
@@ -1017,6 +1031,7 @@ Scaffold_01	168038	b_b	a_a
 Scaffold_01	168195	b_b	a_a
 Scaffold_01	168209	b_b	a_a
 Scaffold_01	168220	b_b	a_a
+Scaffold_01	168272		a_a
 Scaffold_01	168286	b_b	a_a
 Scaffold_01	168290	b_b	a_a
 Scaffold_01	168320	b_b	a_a
@@ -1135,7 +1150,10 @@ Scaffold_01	177946	b_b	a_a
 Scaffold_01	178083	b_b	a_a
 Scaffold_01	178112	b_b	a_a
 Scaffold_01	178133	b_b	a_a
+Scaffold_01	178135		a_a
+Scaffold_01	178344		a_a
 Scaffold_01	178593	b_b	a_a
+Scaffold_01	178769		a_a
 Scaffold_01	179197	b_b	
 Scaffold_01	179567	b_b	a_a
 Scaffold_01	179682	b_b	
@@ -1239,6 +1257,7 @@ Scaffold_01	185622	b_b	a_a
 Scaffold_01	185873	b_b	a_a
 Scaffold_01	185960	b_b	a_a
 Scaffold_01	185983	b_b	a_a
+Scaffold_01	185985		a_a
 Scaffold_01	185996	b_b	a_a
 Scaffold_01	186101	b_b	a_a
 Scaffold_01	186521	b_b	a_a
@@ -1353,6 +1372,7 @@ Scaffold_01	205549	b_b	a_a
 Scaffold_01	205645	b_b	a_a
 Scaffold_01	205888	b_b	a_a
 Scaffold_01	205983	b_b	a_a
+Scaffold_01	206009		a_a
 Scaffold_01	206039	b_b	a_a
 Scaffold_01	206059	b_b	a_a
 Scaffold_01	206166	b_b	a_a
@@ -1398,6 +1418,7 @@ Scaffold_01	209082	b_b	a_a
 Scaffold_01	209092	b_b	a_a
 Scaffold_01	209096	b_b	a_a
 Scaffold_01	209102	b_b	a_a
+Scaffold_01	209136		a_a
 Scaffold_01	209153	b_b	a_a
 Scaffold_01	209165	b_b	a_a
 Scaffold_01	209255	b_b	a_a
@@ -1460,6 +1481,7 @@ Scaffold_01	212571	b_b	a_a
 Scaffold_01	212627	b_b	a_a
 Scaffold_01	212682	b_b	a_a
 Scaffold_01	212763	b_b	a_a
+Scaffold_01	213503		a_a
 Scaffold_01	213800	b_b	a_a
 Scaffold_01	213943	b_b	a_a
 Scaffold_01	213964	b_b	a_a
@@ -1470,6 +1492,7 @@ Scaffold_01	214122	b_b	a_a
 Scaffold_01	214719	b_b	a_a
 Scaffold_01	214726	b_b	a_a
 Scaffold_01	216192	b_b	a_a
+Scaffold_01	216288		a_a
 Scaffold_01	216561	b_b	a_a
 Scaffold_01	216653	b_b	a_a
 Scaffold_01	216695	b_b	a_a
@@ -1671,6 +1694,7 @@ Scaffold_01	242207	b_b	a_a
 Scaffold_01	242211	b_b	a_a
 Scaffold_01	242282	b_b	a_a
 Scaffold_01	242479	b_b	a_a
+Scaffold_01	243115		a_a
 Scaffold_01	243150	b_b	a_a
 Scaffold_01	243244	b_b	a_a
 Scaffold_01	243328	b_b	a_a
@@ -1778,6 +1802,9 @@ Scaffold_01	253620	b_b	a_a
 Scaffold_01	253621	b_b	a_a
 Scaffold_01	253622	b_b	a_a
 Scaffold_01	253870	b_b	a_a
+Scaffold_01	254004		a_a
+Scaffold_01	254111		a_a
+Scaffold_01	254130		a_a
 Scaffold_01	254298	b_b	a_a
 Scaffold_01	254373	b_b	a_a
 Scaffold_01	254952	b_b	a_a
@@ -1793,6 +1820,7 @@ Scaffold_01	255193	b_b	a_a
 Scaffold_01	255256	b_b	a_a
 Scaffold_01	255340	b_b	a_a
 Scaffold_01	255410	b_b	a_a
+Scaffold_01	255645		a_a
 Scaffold_01	255793	b_b	a_a
 Scaffold_01	256173	b_b	a_a
 Scaffold_01	256379	b_b	a_a
@@ -2129,6 +2157,7 @@ Scaffold_01	285358	b_b	a_a
 Scaffold_01	285474	b_b	a_a
 Scaffold_01	285776	b_b	a_a
 Scaffold_01	285878	b_b	a_a
+Scaffold_01	286310		a_a
 Scaffold_01	286703	b_b	a_a
 Scaffold_01	287063	b_b	a_a
 Scaffold_01	290241	b_b	
@@ -2191,6 +2220,7 @@ Scaffold_01	296577	b_b	a_a
 Scaffold_01	296579	b_b	a_a
 Scaffold_01	296636	b_b	a_a
 Scaffold_01	296689	b_b	a_a
+Scaffold_01	297545		a_a
 Scaffold_01	297618	b_b	a_a
 Scaffold_01	298814	b_b	a_a
 Scaffold_01	298974	b_b	a_a
@@ -2375,6 +2405,7 @@ Scaffold_01	316730	b_b	a_a
 Scaffold_01	316845	b_b	a_a
 Scaffold_01	316852	b_b	a_a
 Scaffold_01	316987	b_b	a_a
+Scaffold_01	317050		a_a
 Scaffold_01	317069	b_b	a_a
 Scaffold_01	317099	b_b	a_a
 Scaffold_01	317116	b_b	a_a
@@ -2383,6 +2414,7 @@ Scaffold_01	317254	b_b	a_a
 Scaffold_01	317305	b_b	a_a
 Scaffold_01	317323	b_b	a_a
 Scaffold_01	317440	b_b	a_a
+Scaffold_01	317472		a_a
 Scaffold_01	317498	b_b	a_a
 Scaffold_01	318145	b_b	a_a
 Scaffold_01	318396	b_b	a_a
@@ -2424,6 +2456,7 @@ Scaffold_01	320771	b_b	a_a
 Scaffold_01	320839	b_b	a_a
 Scaffold_01	320909	b_b	a_a
 Scaffold_01	320918	b_b	a_a
+Scaffold_01	321247		a_a
 Scaffold_01	321497	b_b	a_a
 Scaffold_01	321518	b_b	a_a
 Scaffold_01	321519	b_b	a_a
@@ -2446,6 +2479,9 @@ Scaffold_01	332649	b_b	a_a
 Scaffold_01	332651	b_b	a_a
 Scaffold_01	332664	b_b	a_a
 Scaffold_01	332668	b_b	a_a
+Scaffold_01	332787		a_a
+Scaffold_01	332795		a_a
+Scaffold_01	334247		a_a
 Scaffold_01	335984	b_b	a_a
 Scaffold_01	336011	b_b	a_a
 Scaffold_01	336017	b_b	a_a
@@ -2674,8 +2710,10 @@ Scaffold_01	351333	b_b	a_a
 Scaffold_01	351353	b_b	a_a
 Scaffold_01	351372	b_b	a_a
 Scaffold_01	351438	b_b	a_a
+Scaffold_01	351461		a_a
 Scaffold_01	351467	b_b	a_a
 Scaffold_01	351471	b_b	a_a
+Scaffold_01	351492		a_a
 Scaffold_01	351498	b_b	a_a
 Scaffold_01	351510	b_b	a_a
 Scaffold_01	351753	b_b	a_a
@@ -2806,6 +2844,7 @@ Scaffold_01	361365	b_b	a_a
 Scaffold_01	361366	b_b	a_a
 Scaffold_01	361384	b_b	a_a
 Scaffold_01	361390	b_b	a_a
+Scaffold_01	361399		a_a
 Scaffold_01	361402	b_b	a_a
 Scaffold_01	361407	b_b	a_a
 Scaffold_01	361412	b_b	a_a
@@ -2861,7 +2900,9 @@ Scaffold_01	365054	b_b
 Scaffold_01	365055	b_b	
 Scaffold_01	365069	b_b	a_a
 Scaffold_01	365160	b_b	
+Scaffold_01	365398		a_a
 Scaffold_01	365420	b_b	a_a
+Scaffold_01	365438		a_a
 Scaffold_01	365538	b_b	a_a
 Scaffold_01	365733	b_b	a_a
 Scaffold_01	365826	b_b	a_a
@@ -3042,6 +3083,7 @@ Scaffold_01	381197	b_b	a_a
 Scaffold_01	381612	b_b	a_a
 Scaffold_01	381768	b_b	a_a
 Scaffold_01	381828	b_b	a_a
+Scaffold_01	381966		a_a
 Scaffold_01	382035	b_b	a_a
 Scaffold_01	382075	b_b	a_a
 Scaffold_01	382130	b_b	a_a
@@ -3122,7 +3164,10 @@ Scaffold_01	386702	b_b	a_a
 Scaffold_01	386727	b_b	a_a
 Scaffold_01	386957	b_b	a_a
 Scaffold_01	386992	b_b	a_a
+Scaffold_01	387007		a_a
 Scaffold_01	387014	b_b	a_a
+Scaffold_01	387375		a_a
+Scaffold_01	387467		a_a
 Scaffold_01	387654	b_b	a_a
 Scaffold_01	387661	b_b	a_a
 Scaffold_01	387739	b_b	a_a
@@ -3160,6 +3205,7 @@ Scaffold_01	390231	b_b	a_a
 Scaffold_01	390283	b_b	a_a
 Scaffold_01	390285	b_b	a_a
 Scaffold_01	390296	b_b	a_a
+Scaffold_01	390484		a_a
 Scaffold_01	391029	b_b	a_a
 Scaffold_01	391042	b_b	a_a
 Scaffold_01	391259	b_b	a_a
@@ -3204,6 +3250,7 @@ Scaffold_01	393709	b_b	a_a
 Scaffold_01	393740	b_b	a_a
 Scaffold_01	393741	b_b	a_a
 Scaffold_01	393744	b_b	a_a
+Scaffold_01	393777		a_a
 Scaffold_01	393847	b_b	a_a
 Scaffold_01	393890	b_b	a_a
 Scaffold_01	393892	b_b	a_a
@@ -3219,6 +3266,8 @@ Scaffold_01	395148	b_b	a_a
 Scaffold_01	395168	b_b	a_a
 Scaffold_01	395416	b_b	a_a
 Scaffold_01	395617	b_b	a_a
+Scaffold_01	395644		a_a
+Scaffold_01	395693		a_a
 Scaffold_01	395712	b_b	a_a
 Scaffold_01	395722	b_b	a_a
 Scaffold_01	395733	b_b	a_a
@@ -3444,6 +3493,7 @@ Scaffold_01	413968	b_b	a_a
 Scaffold_01	414026	b_b	a_a
 Scaffold_01	414044	b_b	a_a
 Scaffold_01	414189	b_b	a_a
+Scaffold_01	414346		a_a
 Scaffold_01	414351	b_b	a_a
 Scaffold_01	414611	b_b	a_a
 Scaffold_01	414612	b_b	a_a
@@ -3514,6 +3564,7 @@ Scaffold_01	419606	b_b	a_a
 Scaffold_01	419709	b_b	a_a
 Scaffold_01	419743	b_b	a_a
 Scaffold_01	419977	b_b	a_a
+Scaffold_01	420127		a_a
 Scaffold_01	420295	b_b	a_a
 Scaffold_01	420590	b_b	
 Scaffold_01	421612	b_b	a_a
@@ -3534,9 +3585,11 @@ Scaffold_01	425068	b_b	a_a
 Scaffold_01	425520	b_b	a_a
 Scaffold_01	425544	b_b	a_a
 Scaffold_01	425646	b_b	a_a
+Scaffold_01	425798		a_a
 Scaffold_01	426107	b_b	a_a
 Scaffold_01	426182	b_b	a_a
 Scaffold_01	426188	b_b	a_a
+Scaffold_01	426189		a_a
 Scaffold_01	426213	b_b	a_a
 Scaffold_01	426306	b_b	a_a
 Scaffold_01	426360	b_b	a_a
@@ -4408,6 +4461,7 @@ Scaffold_01	487515	b_b	a_a
 Scaffold_01	487633	b_b	a_a
 Scaffold_01	487726	b_b	a_a
 Scaffold_01	487782	b_b	a_a
+Scaffold_01	487797		a_a
 Scaffold_01	487934	b_b	a_a
 Scaffold_01	487951	b_b	a_a
 Scaffold_01	487969	b_b	a_a
@@ -5066,12 +5120,19 @@ Scaffold_01	548611	b_b	a_a
 Scaffold_01	548678	b_b	a_a
 Scaffold_01	548857	b_b	a_a
 Scaffold_01	548906	b_b	a_a
+Scaffold_01	548948		a_a
 Scaffold_01	548963	b_b	a_a
 Scaffold_01	548971	b_b	a_a
+Scaffold_01	549012		a_a
 Scaffold_01	549028	b_b	a_a
 Scaffold_01	549043	b_b	a_a
+Scaffold_01	549182		a_a
+Scaffold_01	549330		a_a
 Scaffold_01	549344	b_b	a_a
 Scaffold_01	549351	b_b	a_a
+Scaffold_01	549369		a_a
+Scaffold_01	549389		a_a
+Scaffold_01	549426		a_a
 Scaffold_01	549578	b_b	
 Scaffold_01	549581	b_b	a_a
 Scaffold_01	549639	b_b	
@@ -5094,6 +5155,7 @@ Scaffold_01	551514	b_b	a_a
 Scaffold_01	551600	b_b	a_a
 Scaffold_01	551781	b_b	a_a
 Scaffold_01	551879	b_b	a_a
+Scaffold_01	551900		a_a
 Scaffold_01	551925	b_b	a_a
 Scaffold_01	551944	b_b	a_a
 Scaffold_01	551974	b_b	a_a
@@ -5160,6 +5222,7 @@ Scaffold_01	561147	b_b	a_a
 Scaffold_01	561335	b_b	a_a
 Scaffold_01	561349	b_b	a_a
 Scaffold_01	561362	b_b	a_a
+Scaffold_01	561405		a_a
 Scaffold_01	561667	b_b	a_a
 Scaffold_01	562146	b_b	a_a
 Scaffold_01	562147	b_b	a_a
@@ -5441,6 +5504,7 @@ Scaffold_01	595916	b_b	a_a
 Scaffold_01	596127	b_b	a_a
 Scaffold_01	596199	b_b	a_a
 Scaffold_01	596375	b_b	a_a
+Scaffold_01	596584		a_a
 Scaffold_01	596941	b_b	a_a
 Scaffold_01	597025	b_b	a_a
 Scaffold_01	597026	b_b	a_a
@@ -5499,7 +5563,9 @@ Scaffold_01	605079	b_b	a_a
 Scaffold_01	605385	b_b	a_a
 Scaffold_01	605392	b_b	a_a
 Scaffold_01	605466	b_b	a_a
+Scaffold_01	605575		a_a
 Scaffold_01	605578	b_b	a_a
+Scaffold_01	605609		a_a
 Scaffold_01	605892	b_b	a_a
 Scaffold_01	605904	b_b	a_a
 Scaffold_01	605913	b_b	a_a
@@ -5561,6 +5627,7 @@ Scaffold_01	612404	b_b	a_a
 Scaffold_01	612528	b_b	a_a
 Scaffold_01	612568	b_b	a_a
 Scaffold_01	612699	b_b	a_a
+Scaffold_01	612950		a_a
 Scaffold_01	613412	b_b	a_a
 Scaffold_01	613452	b_b	a_a
 Scaffold_01	614131	b_b	a_a
@@ -5586,6 +5653,10 @@ Scaffold_01	617788	b_b	a_a
 Scaffold_01	617789	b_b	a_a
 Scaffold_01	617923	b_b	
 Scaffold_01	617939	b_b	
+Scaffold_01	618033		a_a
+Scaffold_01	618034		a_a
+Scaffold_01	618044		a_a
+Scaffold_01	618073		a_a
 Scaffold_01	618106	b_b	a_a
 Scaffold_01	618343	b_b	a_a
 Scaffold_01	618439	b_b	a_a
@@ -5707,6 +5778,7 @@ Scaffold_01	654064	b_b	a_a
 Scaffold_01	654077	b_b	a_a
 Scaffold_01	654088	b_b	a_a
 Scaffold_01	654116	b_b	a_a
+Scaffold_01	655020		a_a
 Scaffold_01	655205	b_b	a_a
 Scaffold_01	655289	b_b	a_a
 Scaffold_01	655306	b_b	a_a
@@ -5836,6 +5908,7 @@ Scaffold_01	674013	b_b	a_a
 Scaffold_01	674808	b_b	a_a
 Scaffold_01	674848	b_b	a_a
 Scaffold_01	674879	b_b	
+Scaffold_01	675220		a_a
 Scaffold_01	675248	b_b	a_a
 Scaffold_01	675486	b_b	a_a
 Scaffold_01	675608	b_b	a_a
@@ -5872,6 +5945,7 @@ Scaffold_01	678215	b_b	a_a
 Scaffold_01	678231	b_b	a_a
 Scaffold_01	678332	b_b	a_a
 Scaffold_01	678360	b_b	a_a
+Scaffold_01	678522		a_a
 Scaffold_01	678560	b_b	a_a
 Scaffold_01	679065	b_b	a_a
 Scaffold_01	679097	b_b	a_a
@@ -6010,6 +6084,7 @@ Scaffold_01	685898	b_b	a_a
 Scaffold_01	685930	b_b	a_a
 Scaffold_01	686078	b_b	a_a
 Scaffold_01	686160	b_b	a_a
+Scaffold_01	686162		a_a
 Scaffold_01	686164	b_b	a_a
 Scaffold_01	686171	b_b	a_a
 Scaffold_01	686253	b_b	a_a
@@ -6021,6 +6096,7 @@ Scaffold_01	686340	b_b	a_a
 Scaffold_01	686384	b_b	a_a
 Scaffold_01	686389	b_b	a_a
 Scaffold_01	686433	b_b	a_a
+Scaffold_01	686437		a_a
 Scaffold_01	686468	b_b	a_a
 Scaffold_01	686511	b_b	a_a
 Scaffold_01	686516	b_b	a_a
@@ -6065,13 +6141,16 @@ Scaffold_01	690134	b_b	a_a
 Scaffold_01	690150	b_b	a_a
 Scaffold_01	690163	b_b	a_a
 Scaffold_01	690870	b_b	a_a
+Scaffold_01	691965		a_a
 Scaffold_01	694934	b_b	a_a
 Scaffold_01	694964	b_b	a_a
 Scaffold_01	695070	b_b	a_a
 Scaffold_01	695111	b_b	a_a
 Scaffold_01	695127	b_b	a_a
 Scaffold_01	695190	b_b	a_a
+Scaffold_01	696536		a_a
 Scaffold_01	696683	b_b	a_a
+Scaffold_01	696705		a_a
 Scaffold_01	696728	b_b	a_a
 Scaffold_01	696736	b_b	a_a
 Scaffold_01	696759	b_b	a_a
@@ -6092,6 +6171,7 @@ Scaffold_01	697185	b_b	a_a
 Scaffold_01	697192	b_b	a_a
 Scaffold_01	697509	b_b	a_a
 Scaffold_01	697540	b_b	a_a
+Scaffold_01	699161		a_a
 Scaffold_01	699195	b_b	a_a
 Scaffold_01	699267	b_b	a_a
 Scaffold_01	699437	b_b	a_a
@@ -6294,6 +6374,7 @@ Scaffold_01	719995	b_b	a_a
 Scaffold_01	720257	b_b	a_a
 Scaffold_01	720291	b_b	a_a
 Scaffold_01	721577	b_b	a_a
+Scaffold_01	721752		a_a
 Scaffold_01	723637	b_b	a_a
 Scaffold_01	724234	b_b	a_a
 Scaffold_01	724308	b_b	a_a
@@ -6364,6 +6445,7 @@ Scaffold_01	728550	b_b	a_a
 Scaffold_01	728599	b_b	a_a
 Scaffold_01	728619	b_b	a_a
 Scaffold_01	728641	b_b	a_a
+Scaffold_01	728818		a_a
 Scaffold_01	729587	b_b	
 Scaffold_01	729711	b_b	a_a
 Scaffold_01	729727	b_b	a_a
@@ -6516,6 +6598,7 @@ Scaffold_01	744773	b_b	a_a
 Scaffold_01	744811	b_b	a_a
 Scaffold_01	744813	b_b	a_a
 Scaffold_01	744854	b_b	a_a
+Scaffold_01	744868		a_a
 Scaffold_01	744886	b_b	a_a
 Scaffold_01	744898	b_b	a_a
 Scaffold_01	744975	b_b	a_a
@@ -6805,6 +6888,7 @@ Scaffold_01	766906	b_b	a_a
 Scaffold_01	768662	b_b	a_a
 Scaffold_01	768664	b_b	a_a
 Scaffold_01	768954	b_b	a_a
+Scaffold_01	768985		a_a
 Scaffold_01	768987	b_b	a_a
 Scaffold_01	769027	b_b	a_a
 Scaffold_01	769077	b_b	a_a
@@ -6824,12 +6908,14 @@ Scaffold_01	770105	b_b	a_a
 Scaffold_01	770109	b_b	a_a
 Scaffold_01	770128	b_b	a_a
 Scaffold_01	770141	b_b	a_a
+Scaffold_01	770142		a_a
 Scaffold_01	770153	b_b	a_a
 Scaffold_01	770174	b_b	a_a
 Scaffold_01	770177	b_b	a_a
 Scaffold_01	770208	b_b	a_a
 Scaffold_01	770461	b_b	a_a
 Scaffold_01	770480	b_b	a_a
+Scaffold_01	770529		a_a
 Scaffold_01	770550	b_b	a_a
 Scaffold_01	770794	b_b	a_a
 Scaffold_01	771034	b_b	a_a
@@ -6839,6 +6925,7 @@ Scaffold_01	771335	b_b	a_a
 Scaffold_01	773586	b_b	
 Scaffold_01	773618	b_b	
 Scaffold_01	775989	b_b	a_a
+Scaffold_01	776116		a_a
 Scaffold_01	776203	b_b	a_a
 Scaffold_01	776283	b_b	a_a
 Scaffold_01	776415	b_b	a_a
@@ -7846,7 +7933,9 @@ Scaffold_01	878316	b_b	a_a
 Scaffold_01	878353	b_b	a_a
 Scaffold_01	878554	b_b	a_a
 Scaffold_01	878557	b_b	a_a
+Scaffold_01	878590		a_a
 Scaffold_01	878606	b_b	a_a
+Scaffold_01	878611		a_a
 Scaffold_01	878659	b_b	a_a
 Scaffold_01	878660	b_b	a_a
 Scaffold_01	878994	b_b	a_a
@@ -7969,6 +8058,7 @@ Scaffold_01	892838	b_b	a_a
 Scaffold_01	893342	b_b	a_a
 Scaffold_01	893357	b_b	a_a
 Scaffold_01	893405	b_b	a_a
+Scaffold_01	893673		a_a
 Scaffold_01	893971	b_b	a_a
 Scaffold_01	894175	b_b	a_a
 Scaffold_01	894481	b_b	a_a
@@ -8154,6 +8244,7 @@ Scaffold_01	914755	b_b	a_a
 Scaffold_01	914758	b_b	a_a
 Scaffold_01	914779	b_b	a_a
 Scaffold_01	914782	b_b	a_a
+Scaffold_01	916657		a_a
 Scaffold_01	916677	b_b	a_a
 Scaffold_01	916747	b_b	a_a
 Scaffold_01	916812	b_b	a_a
@@ -8453,6 +8544,7 @@ Scaffold_01	952875	b_b	a_a
 Scaffold_01	952956	b_b	a_a
 Scaffold_01	952978	b_b	a_a
 Scaffold_01	952980	b_b	a_a
+Scaffold_01	953196		a_a
 Scaffold_01	953335	b_b	a_a
 Scaffold_01	953345	b_b	a_a
 Scaffold_01	953393	b_b	a_a
@@ -8667,6 +8759,7 @@ Scaffold_01	968956	b_b	a_a
 Scaffold_01	969011	b_b	a_a
 Scaffold_01	969125	b_b	a_a
 Scaffold_01	969165	b_b	a_a
+Scaffold_01	969568		a_a
 Scaffold_01	969973	b_b	a_a
 Scaffold_01	970021	b_b	a_a
 Scaffold_01	970050	b_b	a_a
@@ -8914,6 +9007,7 @@ Scaffold_01	993913	b_b	a_a
 Scaffold_01	993979	b_b	a_a
 Scaffold_01	994043	b_b	a_a
 Scaffold_01	994044	b_b	a_a
+Scaffold_01	994073		a_a
 Scaffold_01	994095	b_b	a_a
 Scaffold_01	994100	b_b	a_a
 Scaffold_01	994103	b_b	a_a
@@ -9123,6 +9217,7 @@ Scaffold_01	1016374	b_b	a_a
 Scaffold_01	1016746	b_b	a_a
 Scaffold_01	1016756	b_b	a_a
 Scaffold_01	1017570	b_b	a_a
+Scaffold_01	1017945		a_a
 Scaffold_01	1017973	b_b	a_a
 Scaffold_01	1017975	b_b	a_a
 Scaffold_01	1017976	b_b	a_a
@@ -9466,6 +9561,7 @@ Scaffold_01	1066686	b_b	a_a
 Scaffold_01	1066719	b_b	a_a
 Scaffold_01	1066737	b_b	a_a
 Scaffold_01	1068007	b_b	a_a
+Scaffold_01	1068132		a_a
 Scaffold_01	1069306	b_b	a_a
 Scaffold_01	1069352	b_b	a_a
 Scaffold_01	1070184	b_b	a_a
@@ -9706,6 +9802,7 @@ Scaffold_01	1106472	b_b	a_a
 Scaffold_01	1106635	b_b	a_a
 Scaffold_01	1107934	b_b	a_a
 Scaffold_01	1107957	b_b	a_a
+Scaffold_01	1108146		a_a
 Scaffold_01	1108157	b_b	a_a
 Scaffold_01	1108199	b_b	a_a
 Scaffold_01	1109263	b_b	a_a
@@ -10001,7 +10098,9 @@ Scaffold_01	1136058	b_b	a_a
 Scaffold_01	1136110	b_b	a_a
 Scaffold_01	1136130	b_b	a_a
 Scaffold_01	1136195	b_b	a_a
+Scaffold_01	1136235		a_a
 Scaffold_01	1136326	b_b	a_a
+Scaffold_01	1136330		a_a
 Scaffold_01	1136370	b_b	a_a
 Scaffold_01	1136452	b_b	a_a
 Scaffold_01	1136466	b_b	a_a
@@ -10044,6 +10143,7 @@ Scaffold_01	1138892	b_b	a_a
 Scaffold_01	1139075	b_b	a_a
 Scaffold_01	1139081	b_b	a_a
 Scaffold_01	1139574	b_b	a_a
+Scaffold_01	1139580		a_a
 Scaffold_01	1139610	b_b	a_a
 Scaffold_01	1139865	b_b	a_a
 Scaffold_01	1140086	b_b	a_a
@@ -10129,12 +10229,14 @@ Scaffold_01	1150127	b_b	a_a
 Scaffold_01	1150158	b_b	a_a
 Scaffold_01	1150261	b_b	a_a
 Scaffold_01	1150278	b_b	a_a
+Scaffold_01	1150735		a_a
 Scaffold_01	1150878	b_b	a_a
 Scaffold_01	1151386	b_b	a_a
 Scaffold_01	1153599	b_b	a_a
 Scaffold_01	1154710	b_b	a_a
 Scaffold_01	1154716	b_b	a_a
 Scaffold_01	1155846	b_b	a_a
+Scaffold_01	1155976		a_a
 Scaffold_01	1156412	b_b	a_a
 Scaffold_01	1156653	b_b	a_a
 Scaffold_01	1156823	b_b	a_a
@@ -10167,6 +10269,7 @@ Scaffold_01	1161995	b_b	a_a
 Scaffold_01	1162375	b_b	a_a
 Scaffold_01	1162376	b_b	a_a
 Scaffold_01	1162538	b_b	a_a
+Scaffold_01	1162766		a_a
 Scaffold_01	1162792	b_b	a_a
 Scaffold_01	1162814	b_b	a_a
 Scaffold_01	1162859	b_b	a_a
@@ -10431,6 +10534,7 @@ Scaffold_01	1198642	b_b
 Scaffold_01	1199044	b_b	a_a
 Scaffold_01	1199583	b_b	a_a
 Scaffold_01	1199696	b_b	a_a
+Scaffold_01	1203133		a_a
 Scaffold_01	1203309	b_b	a_a
 Scaffold_01	1203328	b_b	a_a
 Scaffold_01	1203335	b_b	a_a
@@ -10659,6 +10763,7 @@ Scaffold_01	1233904	b_b
 Scaffold_01	1233914	b_b	
 Scaffold_01	1233916	b_b	
 Scaffold_01	1233931	b_b	
+Scaffold_01	1233936		a_a
 Scaffold_01	1233954	b_b	
 Scaffold_01	1233973	b_b	a_a
 Scaffold_01	1234072	b_b	a_a
@@ -10711,6 +10816,7 @@ Scaffold_01	1242740	b_b	a_a
 Scaffold_01	1243433	b_b	a_a
 Scaffold_01	1244249	b_b	a_a
 Scaffold_01	1244774	b_b	a_a
+Scaffold_01	1244857		a_a
 Scaffold_01	1244918	b_b	a_a
 Scaffold_01	1244971	b_b	a_a
 Scaffold_01	1244991	b_b	a_a
@@ -10855,6 +10961,7 @@ Scaffold_01	1251734	b_b	a_a
 Scaffold_01	1251775	b_b	a_a
 Scaffold_01	1251805	b_b	a_a
 Scaffold_01	1251816	b_b	a_a
+Scaffold_01	1251846		a_a
 Scaffold_01	1251914	b_b	a_a
 Scaffold_01	1252044	b_b	a_a
 Scaffold_01	1252087	b_b	a_a
@@ -10920,7 +11027,9 @@ Scaffold_01	1254678	b_b	a_a
 Scaffold_01	1254699	b_b	a_a
 Scaffold_01	1254734	b_b	a_a
 Scaffold_01	1254738	b_b	a_a
+Scaffold_01	1254798		a_a
 Scaffold_01	1254799	b_b	a_a
+Scaffold_01	1254801		a_a
 Scaffold_01	1254807	b_b	a_a
 Scaffold_01	1254813	b_b	a_a
 Scaffold_01	1254852	b_b	a_a
@@ -11137,6 +11246,7 @@ Scaffold_01	1278716	b_b	a_a
 Scaffold_01	1279259	b_b	a_a
 Scaffold_01	1280495	b_b	a_a
 Scaffold_01	1280807	b_b	a_a
+Scaffold_01	1282191		a_a
 Scaffold_01	1282713	b_b	a_a
 Scaffold_01	1284591	b_b	a_a
 Scaffold_01	1284653	b_b	a_a
@@ -11310,6 +11420,7 @@ Scaffold_01	1295086	b_b	a_a
 Scaffold_01	1295089	b_b	a_a
 Scaffold_01	1295100	b_b	a_a
 Scaffold_01	1295109	b_b	a_a
+Scaffold_01	1297115		a_a
 Scaffold_01	1297216	b_b	a_a
 Scaffold_01	1297496	b_b	a_a
 Scaffold_01	1297682	b_b	a_a
@@ -11433,6 +11544,9 @@ Scaffold_01	1312375	b_b	a_a
 Scaffold_01	1312569	b_b	a_a
 Scaffold_01	1312618	b_b	a_a
 Scaffold_01	1312654	b_b	a_a
+Scaffold_01	1313031		a_a
+Scaffold_01	1313062		a_a
+Scaffold_01	1313105		a_a
 Scaffold_01	1314053	b_b	a_a
 Scaffold_01	1314077	b_b	a_a
 Scaffold_01	1314859	b_b	a_a
@@ -11489,10 +11603,12 @@ Scaffold_01	1340586	b_b	a_a
 Scaffold_01	1340624	b_b	a_a
 Scaffold_01	1340636	b_b	a_a
 Scaffold_01	1340656	b_b	a_a
+Scaffold_01	1340975		a_a
 Scaffold_01	1343355	b_b	a_a
 Scaffold_01	1343372	b_b	a_a
 Scaffold_01	1343380	b_b	a_a
 Scaffold_01	1343410	b_b	a_a
+Scaffold_01	1343430		a_a
 Scaffold_01	1343520	b_b	a_a
 Scaffold_01	1343525	b_b	a_a
 Scaffold_01	1343541	b_b	a_a
@@ -12161,6 +12277,7 @@ Scaffold_01	1415017	b_b	a_a
 Scaffold_01	1415194	b_b	a_a
 Scaffold_01	1415403	b_b	a_a
 Scaffold_01	1415514	b_b	a_a
+Scaffold_01	1416092		a_a
 Scaffold_01	1416476	b_b	a_a
 Scaffold_01	1416497	b_b	a_a
 Scaffold_01	1416556	b_b	a_a
@@ -12176,6 +12293,7 @@ Scaffold_01	1419103	b_b	a_a
 Scaffold_01	1419176	b_b	a_a
 Scaffold_01	1419406	b_b	a_a
 Scaffold_01	1419610	b_b	a_a
+Scaffold_01	1420230		a_a
 Scaffold_01	1421201	b_b	a_a
 Scaffold_01	1421274	b_b	a_a
 Scaffold_01	1421302	b_b	a_a
@@ -12575,11 +12693,13 @@ Scaffold_01	1456615	b_b	a_a
 Scaffold_01	1456780	b_b	a_a
 Scaffold_01	1456926	b_b	a_a
 Scaffold_01	1457407	b_b	a_a
+Scaffold_01	1457476		a_a
 Scaffold_01	1458010	b_b	a_a
 Scaffold_01	1458316	b_b	a_a
 Scaffold_01	1458353	b_b	a_a
 Scaffold_01	1458439	b_b	a_a
 Scaffold_01	1458448	b_b	a_a
+Scaffold_01	1458465		a_a
 Scaffold_01	1458497	b_b	a_a
 Scaffold_01	1458504	b_b	a_a
 Scaffold_01	1458630	b_b	a_a
@@ -12613,6 +12733,7 @@ Scaffold_01	1464903	b_b	a_a
 Scaffold_01	1464906	b_b	a_a
 Scaffold_01	1464940	b_b	a_a
 Scaffold_01	1465005	b_b	a_a
+Scaffold_01	1465394		a_a
 Scaffold_01	1465925	b_b	a_a
 Scaffold_01	1466198	b_b	a_a
 Scaffold_01	1466334	b_b	a_a
@@ -12787,6 +12908,7 @@ Scaffold_01	1480242	b_b
 Scaffold_01	1480254	b_b	
 Scaffold_01	1480260	b_b	
 Scaffold_01	1480352	b_b	
+Scaffold_01	1480496		a_a
 Scaffold_01	1480516	b_b	a_a
 Scaffold_01	1480540	b_b	a_a
 Scaffold_01	1480569	b_b	a_a
@@ -12851,6 +12973,7 @@ Scaffold_01	1487825	b_b	a_a
 Scaffold_01	1487871	b_b	
 Scaffold_01	1489702	b_b	a_a
 Scaffold_01	1490085	b_b	a_a
+Scaffold_01	1490184		a_a
 Scaffold_01	1490257	b_b	a_a
 Scaffold_01	1490535	b_b	a_a
 Scaffold_01	1490536	b_b	a_a
@@ -13851,21 +13974,30 @@ Scaffold_01	1565299	b_b
 Scaffold_01	1565380	b_b	a_a
 Scaffold_01	1566105	b_b	
 Scaffold_01	1566295	b_b	a_a
+Scaffold_01	1566663		a_a
 Scaffold_01	1566837	b_b	a_a
 Scaffold_01	1567093	b_b	a_a
 Scaffold_01	1567260	b_b	
 Scaffold_01	1567584	b_b	a_a
 Scaffold_01	1567804	b_b	a_a
 Scaffold_01	1568054	b_b	a_a
+Scaffold_01	1568820		a_a
 Scaffold_01	1568931	b_b	a_a
 Scaffold_01	1568944	b_b	
 Scaffold_01	1568989	b_b	
 Scaffold_01	1569233	b_b	a_a
 Scaffold_01	1569242	b_b	a_a
+Scaffold_01	1569665		a_a
+Scaffold_01	1569711		a_a
 Scaffold_01	1569864	b_b	a_a
 Scaffold_01	1569906	b_b	a_a
+Scaffold_01	1569933		a_a
+Scaffold_01	1570063		a_a
+Scaffold_01	1570069		a_a
 Scaffold_01	1570680	b_b	a_a
+Scaffold_01	1571048		a_a
 Scaffold_01	1571421	b_b	a_a
+Scaffold_01	1572850		a_a
 Scaffold_01	1573241	b_b	a_a
 Scaffold_01	1573246	b_b	a_a
 Scaffold_01	1573685	b_b	a_a
@@ -13999,6 +14131,8 @@ Scaffold_01	1591738	b_b	a_a
 Scaffold_01	1592450	b_b	a_a
 Scaffold_01	1592520	b_b	a_a
 Scaffold_01	1592656	b_b	a_a
+Scaffold_01	1592761		a_a
+Scaffold_01	1592788		a_a
 Scaffold_01	1593088	b_b	a_a
 Scaffold_01	1593090	b_b	a_a
 Scaffold_01	1593224	b_b	a_a
@@ -14023,6 +14157,7 @@ Scaffold_01	1593859	b_b	a_a
 Scaffold_01	1593930	b_b	a_a
 Scaffold_01	1594469	b_b	a_a
 Scaffold_01	1594620	b_b	a_a
+Scaffold_01	1594680		a_a
 Scaffold_01	1594719	b_b	
 Scaffold_01	1595583	b_b	
 Scaffold_01	1595999	b_b	a_a
@@ -14112,6 +14247,7 @@ Scaffold_01	1605414	b_b	a_a
 Scaffold_01	1605521	b_b	a_a
 Scaffold_01	1605523	b_b	a_a
 Scaffold_01	1605908	b_b	a_a
+Scaffold_01	1608015		a_a
 Scaffold_01	1608535	b_b	a_a
 Scaffold_01	1608688	b_b	a_a
 Scaffold_01	1609629	b_b	a_a
@@ -14469,8 +14605,10 @@ Scaffold_01	1637643	b_b	a_a
 Scaffold_01	1637645	b_b	a_a
 Scaffold_01	1637779	b_b	a_a
 Scaffold_01	1637788	b_b	a_a
+Scaffold_01	1637795		a_a
 Scaffold_01	1637797	b_b	a_a
 Scaffold_01	1637800	b_b	a_a
+Scaffold_01	1637802		a_a
 Scaffold_01	1637823	b_b	a_a
 Scaffold_01	1637848	b_b	a_a
 Scaffold_01	1637877	b_b	a_a
@@ -14482,6 +14620,7 @@ Scaffold_01	1638203	b_b	a_a
 Scaffold_01	1638249	b_b	a_a
 Scaffold_01	1638256	b_b	a_a
 Scaffold_01	1638326	b_b	a_a
+Scaffold_01	1638385		a_a
 Scaffold_01	1638386	b_b	a_a
 Scaffold_01	1638414	b_b	a_a
 Scaffold_01	1638418	b_b	a_a
@@ -14612,7 +14751,10 @@ Scaffold_01	1647555	b_b	a_a
 Scaffold_01	1647628	b_b	a_a
 Scaffold_01	1647671	b_b	a_a
 Scaffold_01	1648367	b_b	a_a
+Scaffold_01	1648386		a_a
 Scaffold_01	1648391	b_b	a_a
+Scaffold_01	1648402		a_a
+Scaffold_01	1648429		a_a
 Scaffold_01	1648450	b_b	a_a
 Scaffold_01	1648457	b_b	a_a
 Scaffold_01	1648470	b_b	a_a
@@ -14660,12 +14802,16 @@ Scaffold_01	1652595	b_b	a_a
 Scaffold_01	1652714	b_b	a_a
 Scaffold_01	1652785	b_b	a_a
 Scaffold_01	1652993	b_b	a_a
+Scaffold_01	1653035		a_a
 Scaffold_01	1653118	b_b	a_a
 Scaffold_01	1653218	b_b	a_a
 Scaffold_01	1653327	b_b	a_a
+Scaffold_01	1653602		a_a
 Scaffold_01	1653779	b_b	a_a
 Scaffold_01	1654622	b_b	a_a
 Scaffold_01	1656420	b_b	a_a
+Scaffold_01	1656506		a_a
+Scaffold_01	1656817		a_a
 Scaffold_01	1656973	b_b	a_a
 Scaffold_01	1656977	b_b	a_a
 Scaffold_01	1656986	b_b	a_a
@@ -14845,6 +14991,7 @@ Scaffold_01	1668576	b_b	a_a
 Scaffold_01	1668641	b_b	a_a
 Scaffold_01	1668659	b_b	a_a
 Scaffold_01	1668940	b_b	a_a
+Scaffold_01	1669491		a_a
 Scaffold_01	1669523	b_b	a_a
 Scaffold_01	1669972	b_b	a_a
 Scaffold_01	1670025	b_b	a_a
@@ -14854,6 +15001,7 @@ Scaffold_01	1670321	b_b	a_a
 Scaffold_01	1670369	b_b	a_a
 Scaffold_01	1670556	b_b	a_a
 Scaffold_01	1670635	b_b	a_a
+Scaffold_01	1672004		a_a
 Scaffold_01	1672302	b_b	a_a
 Scaffold_01	1672307	b_b	a_a
 Scaffold_01	1672344	b_b	a_a
@@ -14923,6 +15071,7 @@ Scaffold_01	1677395	b_b	a_a
 Scaffold_01	1677417	b_b	a_a
 Scaffold_01	1677431	b_b	a_a
 Scaffold_01	1677473	b_b	a_a
+Scaffold_01	1677488		a_a
 Scaffold_01	1677799	b_b	a_a
 Scaffold_01	1677939	b_b	a_a
 Scaffold_01	1678132	b_b	a_a
@@ -14980,6 +15129,7 @@ Scaffold_01	1681182	b_b	a_a
 Scaffold_01	1681183	b_b	a_a
 Scaffold_01	1681442	b_b	a_a
 Scaffold_01	1681622	b_b	a_a
+Scaffold_01	1681627		a_a
 Scaffold_01	1681632	b_b	a_a
 Scaffold_01	1681638	b_b	a_a
 Scaffold_01	1681966	b_b	a_a
@@ -15048,7 +15198,9 @@ Scaffold_01	1694277	b_b	a_a
 Scaffold_01	1694299	b_b	a_a
 Scaffold_01	1694300	b_b	a_a
 Scaffold_01	1694386	b_b	a_a
+Scaffold_01	1694640		a_a
 Scaffold_01	1694750	b_b	a_a
+Scaffold_01	1694773		a_a
 Scaffold_01	1694780	b_b	a_a
 Scaffold_01	1694844	b_b	a_a
 Scaffold_01	1694859	b_b	a_a
@@ -15424,11 +15576,13 @@ Scaffold_01	1727852	b_b	a_a
 Scaffold_01	1727865	b_b	a_a
 Scaffold_01	1727875	b_b	a_a
 Scaffold_01	1727881	b_b	a_a
+Scaffold_01	1728050		a_a
 Scaffold_01	1728340	b_b	a_a
 Scaffold_01	1728354	b_b	a_a
 Scaffold_01	1730502	b_b	a_a
 Scaffold_01	1730516	b_b	a_a
 Scaffold_01	1730664	b_b	a_a
+Scaffold_01	1730706		a_a
 Scaffold_01	1731069	b_b	
 Scaffold_01	1731266	b_b	a_a
 Scaffold_01	1731315	b_b	a_a
@@ -15442,6 +15596,7 @@ Scaffold_01	1732185	b_b	a_a
 Scaffold_01	1732258	b_b	a_a
 Scaffold_01	1732314	b_b	a_a
 Scaffold_01	1732412	b_b	a_a
+Scaffold_01	1732450		a_a
 Scaffold_01	1732657	b_b	a_a
 Scaffold_01	1732808	b_b	a_a
 Scaffold_01	1733540	b_b	
@@ -15565,6 +15720,7 @@ Scaffold_01	1743454	b_b	a_a
 Scaffold_01	1743613	b_b	a_a
 Scaffold_01	1743641	b_b	a_a
 Scaffold_01	1743817	b_b	a_a
+Scaffold_01	1744104		a_a
 Scaffold_01	1744411	b_b	a_a
 Scaffold_01	1744445	b_b	a_a
 Scaffold_01	1744477	b_b	a_a
@@ -15701,6 +15857,8 @@ Scaffold_01	1756582	b_b	a_a
 Scaffold_01	1756606	b_b	a_a
 Scaffold_01	1756621	b_b	a_a
 Scaffold_01	1756637	b_b	a_a
+Scaffold_01	1756645		a_a
+Scaffold_01	1756648		a_a
 Scaffold_01	1756671	b_b	a_a
 Scaffold_01	1756724	b_b	a_a
 Scaffold_01	1756778	b_b	a_a
@@ -15748,6 +15906,7 @@ Scaffold_01	1759170	b_b	a_a
 Scaffold_01	1759253	b_b	a_a
 Scaffold_01	1759291	b_b	a_a
 Scaffold_01	1759661	b_b	a_a
+Scaffold_01	1759687		a_a
 Scaffold_01	1760136	b_b	a_a
 Scaffold_01	1760140	b_b	a_a
 Scaffold_01	1760142	b_b	a_a
@@ -15757,6 +15916,7 @@ Scaffold_01	1760654	b_b	a_a
 Scaffold_01	1760666	b_b	a_a
 Scaffold_01	1760672	b_b	a_a
 Scaffold_01	1761305	b_b	a_a
+Scaffold_01	1761482		a_a
 Scaffold_01	1761800	b_b	a_a
 Scaffold_01	1762374	b_b	a_a
 Scaffold_01	1763194	b_b	a_a
@@ -15771,6 +15931,7 @@ Scaffold_01	1765369	b_b	a_a
 Scaffold_01	1765394	b_b	a_a
 Scaffold_01	1765435	b_b	a_a
 Scaffold_01	1765459	b_b	a_a
+Scaffold_01	1765579		a_a
 Scaffold_01	1765623	b_b	a_a
 Scaffold_01	1765749	b_b	a_a
 Scaffold_01	1766274	b_b	a_a
@@ -15905,6 +16066,7 @@ Scaffold_01	1775133	b_b	a_a
 Scaffold_01	1775197	b_b	a_a
 Scaffold_01	1775250	b_b	a_a
 Scaffold_01	1775264	b_b	a_a
+Scaffold_01	1775270		a_a
 Scaffold_01	1775285	b_b	a_a
 Scaffold_01	1775607	b_b	a_a
 Scaffold_01	1775952	b_b	a_a
@@ -17871,6 +18033,7 @@ Scaffold_01	2087093	b_b	a_a
 Scaffold_01	2087304	b_b	a_a
 Scaffold_01	2088421	b_b	a_a
 Scaffold_01	2088611	b_b	a_a
+Scaffold_01	2088648		a_a
 Scaffold_01	2088913	b_b	a_a
 Scaffold_01	2088982	b_b	a_a
 Scaffold_01	2088997	b_b	a_a
@@ -18231,6 +18394,7 @@ Scaffold_01	2118574	b_b	a_a
 Scaffold_01	2118617	b_b	a_a
 Scaffold_01	2118693	b_b	a_a
 Scaffold_01	2118777	b_b	a_a
+Scaffold_01	2118791		a_a
 Scaffold_01	2118961	b_b	a_a
 Scaffold_01	2118978	b_b	a_a
 Scaffold_01	2119037	b_b	a_a
@@ -19051,11 +19215,15 @@ Scaffold_01	2204647	b_b	a_a
 Scaffold_01	2207496	b_b	a_a
 Scaffold_01	2207570	b_b	a_a
 Scaffold_01	2208951	b_b	
+Scaffold_01	2209909		a_a
+Scaffold_01	2212019		a_a
 Scaffold_01	2214712	b_b	
 Scaffold_01	2223742	b_b	
 Scaffold_01	2223857	b_b	
+Scaffold_01	2261392		a_a
 Scaffold_01	2269704	b_b	
 Scaffold_01	2269747	b_b	
+Scaffold_01	2276582		a_a
 Scaffold_01	2276635	b_b	
 Scaffold_01	2276742	b_b	
 Scaffold_01	2276822	b_b	a_a
@@ -19110,11 +19278,13 @@ Scaffold_01	2311901	b_b	a_a
 Scaffold_01	2311908	b_b	a_a
 Scaffold_01	2311953	b_b	a_a
 Scaffold_01	2312142	b_b	a_a
+Scaffold_01	2312163		a_a
 Scaffold_01	2313650	b_b	a_a
 Scaffold_01	2313692	b_b	a_a
 Scaffold_01	2313795	b_b	a_a
 Scaffold_01	2313822	b_b	a_a
 Scaffold_01	2313835	b_b	a_a
+Scaffold_01	2316747		a_a
 Scaffold_01	2324703	b_b	
 Scaffold_01	2324749	b_b	
 Scaffold_01	2332933	b_b	
@@ -19124,6 +19294,7 @@ Scaffold_01	2334517	b_b	a_a
 Scaffold_01	2335323	b_b	
 Scaffold_01	2354258	b_b	
 Scaffold_01	2356568	b_b	
+Scaffold_01	2359413		a_a
 Scaffold_01	2360104	b_b	a_a
 Scaffold_01	2360132	b_b	a_a
 Scaffold_01	2366653	b_b	
@@ -19209,6 +19380,7 @@ Scaffold_01	2479114	b_b	a_a
 Scaffold_01	2479213	b_b	a_a
 Scaffold_01	2479582	b_b	a_a
 Scaffold_01	2479605	b_b	a_a
+Scaffold_01	2479650		a_a
 Scaffold_01	2480445	b_b	a_a
 Scaffold_01	2480927	b_b	a_a
 Scaffold_01	2480965	b_b	a_a
@@ -23272,6 +23444,7 @@ Scaffold_01	3073127	b_b	a_a
 Scaffold_01	3073149	b_b	a_a
 Scaffold_01	3073164	b_b	a_a
 Scaffold_01	3073420	b_b	a_a
+Scaffold_01	3076459		a_a
 Scaffold_01	3077071	b_b	a_a
 Scaffold_01	3077225	b_b	a_a
 Scaffold_01	3077364	b_b	a_a
@@ -23806,6 +23979,7 @@ Scaffold_01	3135909	b_b	a_a
 Scaffold_01	3136023	b_b	a_a
 Scaffold_01	3136179	b_b	a_a
 Scaffold_01	3136839	b_b	a_a
+Scaffold_01	3136856		a_a
 Scaffold_01	3137089	b_b	a_a
 Scaffold_01	3138260	b_b	a_a
 Scaffold_01	3139317	b_b	a_a
@@ -23849,6 +24023,7 @@ Scaffold_01	3143527	b_b	a_a
 Scaffold_01	3143528	b_b	a_a
 Scaffold_01	3143532	b_b	a_a
 Scaffold_01	3144140	b_b	a_a
+Scaffold_01	3144224		a_a
 Scaffold_01	3144288	b_b	a_a
 Scaffold_01	3144295	b_b	a_a
 Scaffold_01	3144336	b_b	a_a
@@ -23892,6 +24067,10 @@ Scaffold_01	3146699	b_b	a_a
 Scaffold_01	3146706	b_b	a_a
 Scaffold_01	3146751	b_b	a_a
 Scaffold_01	3146850	b_b	a_a
+Scaffold_01	3147856		a_a
+Scaffold_01	3147886		a_a
+Scaffold_01	3147891		a_a
+Scaffold_01	3147948		a_a
 Scaffold_01	3148130	b_b	a_a
 Scaffold_01	3149434	b_b	a_a
 Scaffold_01	3149511	b_b	a_a
@@ -24152,6 +24331,7 @@ Scaffold_01	3184586	b_b	a_a
 Scaffold_01	3184593	b_b	a_a
 Scaffold_01	3184618	b_b	a_a
 Scaffold_01	3184782	b_b	a_a
+Scaffold_01	3184820		a_a
 Scaffold_01	3184831	b_b	a_a
 Scaffold_01	3184835	b_b	a_a
 Scaffold_01	3184842	b_b	a_a
@@ -24319,6 +24499,7 @@ Scaffold_01	3194451	b_b	a_a
 Scaffold_01	3194481	b_b	a_a
 Scaffold_01	3194487	b_b	a_a
 Scaffold_01	3195321	b_b	a_a
+Scaffold_01	3195474		a_a
 Scaffold_01	3199358	b_b	a_a
 Scaffold_01	3199644	b_b	a_a
 Scaffold_01	3200923	b_b	a_a
@@ -24513,6 +24694,7 @@ Scaffold_01	3231253	b_b	a_a
 Scaffold_01	3231262	b_b	a_a
 Scaffold_01	3231318	b_b	a_a
 Scaffold_01	3233277	b_b	a_a
+Scaffold_01	3234228		a_a
 Scaffold_01	3234677	b_b	a_a
 Scaffold_01	3235103	b_b	a_a
 Scaffold_01	3235331	b_b	a_a
@@ -26072,6 +26254,7 @@ Scaffold_01	3383823	b_b	a_a
 Scaffold_01	3384037	b_b	a_a
 Scaffold_01	3384048	b_b	a_a
 Scaffold_01	3384057	b_b	a_a
+Scaffold_01	3384241		a_a
 Scaffold_01	3384340	b_b	a_a
 Scaffold_01	3384386	b_b	a_a
 Scaffold_01	3384481	b_b	a_a
@@ -26363,6 +26546,9 @@ Scaffold_01	3421656	b_b	a_a
 Scaffold_01	3425929	b_b	a_a
 Scaffold_01	3426389	b_b	a_a
 Scaffold_01	3427098	b_b	a_a
+Scaffold_01	3428819		a_a
+Scaffold_01	3428870		a_a
+Scaffold_01	3428886		a_a
 Scaffold_01	3433887	b_b	a_a
 Scaffold_01	3435430	b_b	a_a
 Scaffold_01	3435453	b_b	a_a
@@ -26456,6 +26642,12 @@ Scaffold_01	3458053	b_b	a_a
 Scaffold_01	3458081	b_b	a_a
 Scaffold_01	3458121	b_b	a_a
 Scaffold_01	3458124	b_b	a_a
+Scaffold_01	3458387		a_a
+Scaffold_01	3458433		a_a
+Scaffold_01	3458446		a_a
+Scaffold_01	3458552		a_a
+Scaffold_01	3458558		a_a
+Scaffold_01	3458644		a_a
 Scaffold_01	3458686	b_b	a_a
 Scaffold_01	3459871	b_b	a_a
 Scaffold_01	3459961	b_b	a_a
@@ -26755,6 +26947,7 @@ Scaffold_01	3494339	b_b	a_a
 Scaffold_01	3494453	b_b	a_a
 Scaffold_01	3494509	b_b	a_a
 Scaffold_01	3494535	b_b	a_a
+Scaffold_01	3494713		a_a
 Scaffold_01	3494918	b_b	a_a
 Scaffold_01	3495446	b_b	a_a
 Scaffold_01	3495697	b_b	a_a
@@ -27059,11 +27252,14 @@ Scaffold_01	3554090	b_b	a_a
 Scaffold_01	3605971	b_b	a_a
 Scaffold_01	3608784	b_b	a_a
 Scaffold_01	3610869	b_b	a_a
+Scaffold_01	3610945		a_a
 Scaffold_01	3611145	b_b	a_a
 Scaffold_01	3611159	b_b	a_a
+Scaffold_01	3611202		a_a
 Scaffold_01	3611230	b_b	a_a
 Scaffold_01	3611271	b_b	a_a
 Scaffold_01	3611276	b_b	a_a
+Scaffold_01	3611691		a_a
 Scaffold_01	3611718	b_b	a_a
 Scaffold_01	3611847	b_b	a_a
 Scaffold_01	3612763	b_b	a_a
@@ -27148,6 +27344,7 @@ Scaffold_01	3623326	b_b	a_a
 Scaffold_01	3623375	b_b	a_a
 Scaffold_01	3623521	b_b	a_a
 Scaffold_01	3624626	b_b	a_a
+Scaffold_01	3624668		a_a
 Scaffold_01	3625105	b_b	a_a
 Scaffold_01	3625181	b_b	a_a
 Scaffold_01	3625306	b_b	a_a
@@ -27860,6 +28057,7 @@ Scaffold_01	3713912	b_b	a_a
 Scaffold_01	3714046	b_b	a_a
 Scaffold_01	3714074	b_b	a_a
 Scaffold_01	3714094	b_b	a_a
+Scaffold_01	3714316		a_a
 Scaffold_01	3714345	b_b	a_a
 Scaffold_01	3714379	b_b	a_a
 Scaffold_01	3714435	b_b	a_a
@@ -28322,6 +28520,7 @@ Scaffold_01	3780775	b_b	a_a
 Scaffold_01	3780845	b_b	a_a
 Scaffold_01	3780866	b_b	a_a
 Scaffold_01	3780883	b_b	a_a
+Scaffold_01	3781038		a_a
 Scaffold_01	3781316	b_b	a_a
 Scaffold_01	3781346	b_b	a_a
 Scaffold_01	3781368	b_b	a_a
@@ -28686,6 +28885,8 @@ Scaffold_01	3836522	b_b	a_a
 Scaffold_01	3836584	b_b	a_a
 Scaffold_01	3836610	b_b	a_a
 Scaffold_01	3836615	b_b	a_a
+Scaffold_01	3836767		a_a
+Scaffold_01	3836773		a_a
 Scaffold_01	3836984	b_b	a_a
 Scaffold_01	3837024	b_b	a_a
 Scaffold_01	3837050	b_b	a_a
@@ -28731,6 +28932,8 @@ Scaffold_01	3838915	b_b	a_a
 Scaffold_01	3839297	b_b	a_a
 Scaffold_01	3839357	b_b	a_a
 Scaffold_01	3839372	b_b	a_a
+Scaffold_01	3839396		a_a
+Scaffold_01	3839400		a_a
 Scaffold_01	3839433	b_b	a_a
 Scaffold_01	3839596	b_b	a_a
 Scaffold_01	3839615	b_b	a_a
@@ -28745,6 +28948,7 @@ Scaffold_01	3839681	b_b	a_a
 Scaffold_01	3839684	b_b	a_a
 Scaffold_01	3839685	b_b	a_a
 Scaffold_01	3839910	b_b	a_a
+Scaffold_01	3839932		a_a
 Scaffold_01	3840060	b_b	a_a
 Scaffold_01	3840085	b_b	a_a
 Scaffold_01	3840086	b_b	a_a
@@ -29589,6 +29793,7 @@ Scaffold_01	3891266	b_b	a_a
 Scaffold_01	3891574	b_b	a_a
 Scaffold_01	3891599	b_b	a_a
 Scaffold_01	3891640	b_b	a_a
+Scaffold_01	3891641		a_a
 Scaffold_01	3891750	b_b	a_a
 Scaffold_01	3891838	b_b	a_a
 Scaffold_01	3891850	b_b	a_a
@@ -30496,6 +30701,8 @@ Scaffold_01	3987956	b_b	a_a
 Scaffold_01	3987964	b_b	a_a
 Scaffold_01	3987969	b_b	a_a
 Scaffold_01	3988097	b_b	a_a
+Scaffold_01	3989944		a_a
+Scaffold_01	3989947		a_a
 Scaffold_01	3990025	b_b	a_a
 Scaffold_01	3990105	b_b	a_a
 Scaffold_01	3990123	b_b	a_a
@@ -30791,6 +30998,7 @@ Scaffold_01	4031075	b_b	a_a
 Scaffold_01	4031131	b_b	a_a
 Scaffold_01	4031132	b_b	a_a
 Scaffold_01	4031167	b_b	a_a
+Scaffold_01	4031259		a_a
 Scaffold_01	4031265	b_b	a_a
 Scaffold_01	4031298	b_b	a_a
 Scaffold_01	4031313	b_b	a_a
@@ -33622,6 +33830,9 @@ Scaffold_01	4371899	b_b	a_a
 Scaffold_01	4372280	b_b	a_a
 Scaffold_01	4372287	b_b	a_a
 Scaffold_01	4373663	b_b	a_a
+Scaffold_01	4378663		a_a
+Scaffold_01	4378673		a_a
+Scaffold_01	4378691		a_a
 Scaffold_01	4378704	b_b	a_a
 Scaffold_01	4378707	b_b	a_a
 Scaffold_01	4378712	b_b	a_a
@@ -34879,6 +35090,7 @@ Scaffold_01	4534440	b_b	a_a
 Scaffold_01	4534638	b_b	a_a
 Scaffold_01	4537294	b_b	a_a
 Scaffold_01	4539722	b_b	a_a
+Scaffold_01	4539941		a_a
 Scaffold_01	4539944	b_b	a_a
 Scaffold_01	4543210	b_b	a_a
 Scaffold_01	4543362	b_b	a_a
@@ -35129,6 +35341,9 @@ Scaffold_01	4571792	b_b	a_a
 Scaffold_01	4572456	b_b	a_a
 Scaffold_01	4572593	b_b	a_a
 Scaffold_01	4574127	b_b	a_a
+Scaffold_01	4574130		a_a
+Scaffold_01	4575553		a_a
+Scaffold_01	4575555		a_a
 Scaffold_01	4575625	b_b	a_a
 Scaffold_01	4575668	b_b	a_a
 Scaffold_01	4575856	b_b	a_a
@@ -36119,6 +36334,7 @@ Scaffold_01	4701322	b_b	a_a
 Scaffold_01	4701380	b_b	a_a
 Scaffold_01	4701817	b_b	a_a
 Scaffold_01	4701983	b_b	a_a
+Scaffold_01	4702113		a_a
 Scaffold_01	4702333	b_b	a_a
 Scaffold_01	4703077	b_b	a_a
 Scaffold_01	4703183	b_b	a_a
@@ -36684,6 +36900,7 @@ Scaffold_01	4753019	b_b	a_a
 Scaffold_01	4753086	b_b	a_a
 Scaffold_01	4753786	b_b	a_a
 Scaffold_01	4754493	b_b	a_a
+Scaffold_01	4754685		a_a
 Scaffold_01	4755056	b_b	a_a
 Scaffold_01	4755070	b_b	a_a
 Scaffold_01	4755092	b_b	a_a
@@ -37907,6 +38124,7 @@ Scaffold_01	4883796	b_b	a_a
 Scaffold_01	4883862	b_b	a_a
 Scaffold_01	4883894	b_b	a_a
 Scaffold_01	4884579	b_b	a_a
+Scaffold_01	4885015		a_a
 Scaffold_01	4887046	b_b	a_a
 Scaffold_01	4887133	b_b	a_a
 Scaffold_01	4887173	b_b	a_a
@@ -37947,6 +38165,8 @@ Scaffold_01	4890309	b_b	a_a
 Scaffold_01	4890315	b_b	a_a
 Scaffold_01	4890339	b_b	a_a
 Scaffold_01	4890377	b_b	a_a
+Scaffold_01	4890395		a_a
+Scaffold_01	4890396		a_a
 Scaffold_01	4890775	b_b	a_a
 Scaffold_01	4890779	b_b	a_a
 Scaffold_01	4890884	b_b	a_a
@@ -38886,6 +39106,7 @@ Scaffold_01	5037432	b_b	a_a
 Scaffold_01	5037934	b_b	a_a
 Scaffold_01	5038046	b_b	a_a
 Scaffold_01	5038518	b_b	a_a
+Scaffold_01	5038542		a_a
 Scaffold_01	5038582	b_b	a_a
 Scaffold_01	5039089	b_b	a_a
 Scaffold_01	5039436	b_b	a_a
@@ -41345,6 +41566,7 @@ Scaffold_01	5300989	b_b	a_a
 Scaffold_01	5301136	b_b	a_a
 Scaffold_01	5301149	b_b	a_a
 Scaffold_01	5301221	b_b	a_a
+Scaffold_01	5302094		a_a
 Scaffold_01	5307944	b_b	a_a
 Scaffold_01	5307960	b_b	a_a
 Scaffold_01	5307974	b_b	a_a
@@ -41532,6 +41754,7 @@ Scaffold_01	5325791	b_b	a_a
 Scaffold_01	5325792	b_b	a_a
 Scaffold_01	5325854	b_b	a_a
 Scaffold_01	5326322	b_b	a_a
+Scaffold_01	5326355		a_a
 Scaffold_01	5326377	b_b	a_a
 Scaffold_01	5326422	b_b	a_a
 Scaffold_01	5326496	b_b	a_a
@@ -42027,6 +42250,8 @@ Scaffold_01	5378155	b_b	a_a
 Scaffold_01	5378330	b_b	a_a
 Scaffold_01	5378337	b_b	a_a
 Scaffold_01	5378349	b_b	a_a
+Scaffold_01	5378368		a_a
+Scaffold_01	5378369		a_a
 Scaffold_01	5378408	b_b	a_a
 Scaffold_01	5378454	b_b	a_a
 Scaffold_01	5378522	b_b	a_a
@@ -50854,6 +51079,8 @@ Scaffold_01	6737778	b_b	a_a
 Scaffold_01	6738171	b_b	a_a
 Scaffold_01	6738175	b_b	a_a
 Scaffold_01	6738176	b_b	a_a
+Scaffold_01	6738712		a_a
+Scaffold_01	6738723		a_a
 Scaffold_01	6738873	b_b	a_a
 Scaffold_01	6738884	b_b	a_a
 Scaffold_01	6739166	b_b	
@@ -50953,6 +51180,7 @@ Scaffold_01	6759281	b_b	a_a
 Scaffold_01	6759316	b_b	a_a
 Scaffold_01	6759542	b_b	a_a
 Scaffold_01	6759589	b_b	a_a
+Scaffold_01	6759605		a_a
 Scaffold_01	6759607	b_b	a_a
 Scaffold_01	6759648	b_b	a_a
 Scaffold_01	6759709	b_b	a_a
@@ -50981,6 +51209,9 @@ Scaffold_01	6762389	b_b	a_a
 Scaffold_01	6762402	b_b	a_a
 Scaffold_01	6762427	b_b	a_a
 Scaffold_01	6762639	b_b	a_a
+Scaffold_01	6763112		a_a
+Scaffold_01	6763213		a_a
+Scaffold_01	6763323		a_a
 Scaffold_01	6764151	b_b	a_a
 Scaffold_01	6764532	b_b	a_a
 Scaffold_01	6764567	b_b	a_a
@@ -50988,13 +51219,26 @@ Scaffold_01	6764780	b_b	a_a
 Scaffold_01	6764970	b_b	a_a
 Scaffold_01	6764976	b_b	a_a
 Scaffold_01	6765279	b_b	a_a
+Scaffold_01	6765902		a_a
+Scaffold_01	6765903		a_a
 Scaffold_01	6767333	b_b	a_a
+Scaffold_01	6768274		a_a
+Scaffold_01	6768285		a_a
+Scaffold_01	6768294		a_a
+Scaffold_01	6768297		a_a
+Scaffold_01	6768312		a_a
 Scaffold_01	6768319	b_b	a_a
+Scaffold_01	6768352		a_a
+Scaffold_01	6768398		a_a
 Scaffold_01	6768407	b_b	a_a
+Scaffold_01	6768499		a_a
 Scaffold_01	6768508	b_b	a_a
+Scaffold_01	6768509		a_a
 Scaffold_01	6768588	b_b	a_a
 Scaffold_01	6768615	b_b	a_a
 Scaffold_01	6768642	b_b	a_a
+Scaffold_01	6768694		a_a
+Scaffold_01	6768696		a_a
 Scaffold_01	6768739	b_b	a_a
 Scaffold_01	6768765	b_b	a_a
 Scaffold_01	6768779	b_b	a_a
@@ -51031,6 +51275,7 @@ Scaffold_01	6770267	b_b	a_a
 Scaffold_01	6770318	b_b	a_a
 Scaffold_01	6770373	b_b	a_a
 Scaffold_01	6770374	b_b	a_a
+Scaffold_01	6770380		a_a
 Scaffold_01	6770383	b_b	a_a
 Scaffold_01	6770423	b_b	a_a
 Scaffold_01	6770425	b_b	a_a
@@ -51048,6 +51293,8 @@ Scaffold_01	6770919	b_b	a_a
 Scaffold_01	6770920	b_b	a_a
 Scaffold_01	6770922	b_b	a_a
 Scaffold_01	6771000	b_b	a_a
+Scaffold_01	6771026		a_a
+Scaffold_01	6771027		a_a
 Scaffold_01	6771055	b_b	a_a
 Scaffold_01	6771067	b_b	a_a
 Scaffold_01	6771353	b_b	a_a
@@ -51056,7 +51303,11 @@ Scaffold_01	6771541	b_b	a_a
 Scaffold_01	6771576	b_b	a_a
 Scaffold_01	6771577	b_b	a_a
 Scaffold_01	6771687	b_b	a_a
+Scaffold_01	6771689		a_a
+Scaffold_01	6771711		a_a
+Scaffold_01	6771739		a_a
 Scaffold_01	6771747	b_b	a_a
+Scaffold_01	6771754		a_a
 Scaffold_01	6771770	b_b	a_a
 Scaffold_01	6771786	b_b	a_a
 Scaffold_01	6771797	b_b	a_a
@@ -51086,6 +51337,8 @@ Scaffold_01	6772556	b_b	a_a
 Scaffold_01	6772574	b_b	a_a
 Scaffold_01	6772650	b_b	a_a
 Scaffold_01	6772658	b_b	a_a
+Scaffold_01	6772662		a_a
+Scaffold_01	6772667		a_a
 Scaffold_01	6772685	b_b	a_a
 Scaffold_01	6772700	b_b	a_a
 Scaffold_01	6772763	b_b	a_a
@@ -51154,6 +51407,8 @@ Scaffold_01	6790148	b_b	a_a
 Scaffold_01	6790362	b_b	a_a
 Scaffold_01	6790606	b_b	a_a
 Scaffold_01	6790627	b_b	a_a
+Scaffold_01	6790827		a_a
+Scaffold_01	6790850		a_a
 Scaffold_01	6791065	b_b	a_a
 Scaffold_01	6792577	b_b	a_a
 Scaffold_01	6795771	b_b	a_a
@@ -51161,6 +51416,12 @@ Scaffold_01	6798593	b_b
 Scaffold_01	6798829	b_b	a_a
 Scaffold_01	6798832	b_b	a_a
 Scaffold_01	6816262	b_b	a_a
+Scaffold_01	6821720		a_a
+Scaffold_01	6821743		a_a
+Scaffold_01	6821749		a_a
+Scaffold_01	6821872		a_a
+Scaffold_01	6821885		a_a
+Scaffold_01	6821978		a_a
 Scaffold_01	6822015	b_b	a_a
 Scaffold_01	6822087	b_b	a_a
 Scaffold_01	6822118	b_b	a_a
@@ -51222,6 +51483,7 @@ Scaffold_01	6830617	b_b	a_a
 Scaffold_01	6830628	b_b	a_a
 Scaffold_01	6830629	b_b	a_a
 Scaffold_01	6830647	b_b	a_a
+Scaffold_01	6830730		a_a
 Scaffold_01	6831123	b_b	a_a
 Scaffold_01	6831128	b_b	a_a
 Scaffold_01	6831135	b_b	a_a
@@ -51273,6 +51535,7 @@ Scaffold_01	6834592	b_b	a_a
 Scaffold_01	6834619	b_b	a_a
 Scaffold_01	6835774	b_b	a_a
 Scaffold_01	6836164	b_b	a_a
+Scaffold_01	6836287		a_a
 Scaffold_01	6837268	b_b	a_a
 Scaffold_01	6837276	b_b	a_a
 Scaffold_01	6839165	b_b	a_a
@@ -51281,8 +51544,12 @@ Scaffold_01	6839888	b_b	a_a
 Scaffold_01	6841875	b_b	a_a
 Scaffold_01	6842426	b_b	a_a
 Scaffold_01	6842601	b_b	a_a
+Scaffold_01	6843544		a_a
+Scaffold_01	6844008		a_a
+Scaffold_01	6844188		a_a
 Scaffold_01	6844291	b_b	a_a
 Scaffold_01	6844358	b_b	a_a
+Scaffold_01	6844720		a_a
 Scaffold_01	6845524	b_b	a_a
 Scaffold_01	6845577	b_b	a_a
 Scaffold_01	6845884	b_b	a_a
@@ -51356,10 +51623,12 @@ Scaffold_01	6854852	b_b	a_a
 Scaffold_01	6854865	b_b	a_a
 Scaffold_01	6854988	b_b	a_a
 Scaffold_01	6855034	b_b	a_a
+Scaffold_01	6855152		a_a
 Scaffold_01	6855192	b_b	a_a
 Scaffold_01	6855207	b_b	a_a
 Scaffold_01	6855225	b_b	a_a
 Scaffold_01	6855268	b_b	a_a
+Scaffold_01	6855361		a_a
 Scaffold_01	6855461	b_b	a_a
 Scaffold_01	6855469	b_b	a_a
 Scaffold_01	6855477	b_b	a_a
@@ -51376,6 +51645,7 @@ Scaffold_01	6855790	b_b	a_a
 Scaffold_01	6855836	b_b	a_a
 Scaffold_01	6855849	b_b	a_a
 Scaffold_01	6855871	b_b	a_a
+Scaffold_01	6855917		a_a
 Scaffold_01	6856336	b_b	a_a
 Scaffold_01	6856831	b_b	a_a
 Scaffold_01	6856849	b_b	a_a
@@ -51527,11 +51797,13 @@ Scaffold_01	6883840	b_b	a_a
 Scaffold_01	6884000	b_b	a_a
 Scaffold_01	6884097	b_b	a_a
 Scaffold_01	6884280	b_b	a_a
+Scaffold_01	6884343		a_a
 Scaffold_01	6884345	b_b	
 Scaffold_01	6884368	b_b	a_a
 Scaffold_01	6884374	b_b	a_a
 Scaffold_01	6884376	b_b	a_a
 Scaffold_01	6884391	b_b	a_a
+Scaffold_01	6884647		a_a
 Scaffold_01	6885265	b_b	a_a
 Scaffold_01	6885274	b_b	a_a
 Scaffold_01	6885289	b_b	a_a
@@ -52610,6 +52882,7 @@ Scaffold_01	7005883	b_b	a_a
 Scaffold_01	7005900	b_b	a_a
 Scaffold_01	7005915	b_b	a_a
 Scaffold_01	7005961	b_b	a_a
+Scaffold_01	7006052		a_a
 Scaffold_01	7006063	b_b	a_a
 Scaffold_01	7006110	b_b	a_a
 Scaffold_01	7006128	b_b	a_a
@@ -52624,6 +52897,7 @@ Scaffold_01	7007110	b_b	a_a
 Scaffold_01	7007121	b_b	a_a
 Scaffold_01	7007134	b_b	a_a
 Scaffold_01	7007175	b_b	a_a
+Scaffold_01	7007182		a_a
 Scaffold_01	7007207	b_b	a_a
 Scaffold_01	7008132	b_b	a_a
 Scaffold_01	7011111	b_b	a_a
@@ -52648,8 +52922,10 @@ Scaffold_01	7014360	b_b	a_a
 Scaffold_01	7014371	b_b	a_a
 Scaffold_01	7015633	b_b	a_a
 Scaffold_01	7015986	b_b	a_a
+Scaffold_01	7016243		a_a
 Scaffold_01	7016501	b_b	a_a
 Scaffold_01	7016511	b_b	a_a
+Scaffold_01	7016671		a_a
 Scaffold_01	7016993	b_b	a_a
 Scaffold_01	7017007	b_b	a_a
 Scaffold_01	7017048	b_b	a_a
@@ -52739,13 +53015,18 @@ Scaffold_01	7023806	b_b	a_a
 Scaffold_01	7023981	b_b	a_a
 Scaffold_01	7023982	b_b	a_a
 Scaffold_01	7026920	b_b	a_a
+Scaffold_01	7035767		a_a
+Scaffold_01	7035789		a_a
 Scaffold_01	7035821	b_b	a_a
 Scaffold_01	7035837	b_b	a_a
 Scaffold_01	7035966	b_b	a_a
+Scaffold_01	7036068		a_a
 Scaffold_01	7036089	b_b	a_a
 Scaffold_01	7036121	b_b	a_a
+Scaffold_01	7036197		a_a
 Scaffold_01	7037963	b_b	a_a
 Scaffold_01	7037965	b_b	a_a
+Scaffold_01	7042774		a_a
 Scaffold_01	7043059	b_b	a_a
 Scaffold_01	7044724	b_b	a_a
 Scaffold_01	7044777	b_b	a_a
@@ -52753,6 +53034,7 @@ Scaffold_01	7045251	b_b	a_a
 Scaffold_01	7045252	b_b	a_a
 Scaffold_01	7045255	b_b	a_a
 Scaffold_01	7045278	b_b	a_a
+Scaffold_01	7045334		a_a
 Scaffold_01	7045377	b_b	a_a
 Scaffold_01	7045382	b_b	a_a
 Scaffold_01	7045395	b_b	a_a
@@ -52952,9 +53234,13 @@ Scaffold_01	7092343	b_b	a_a
 Scaffold_01	7092817	b_b	a_a
 Scaffold_01	7093214	b_b	a_a
 Scaffold_01	7093633	b_b	a_a
+Scaffold_01	7094420		a_a
+Scaffold_01	7094480		a_a
+Scaffold_01	7094610		a_a
 Scaffold_01	7094698	b_b	a_a
 Scaffold_01	7094907	b_b	a_a
 Scaffold_01	7094909	b_b	a_a
+Scaffold_01	7095232		a_a
 Scaffold_01	7095722	b_b	a_a
 Scaffold_01	7096580	b_b	a_a
 Scaffold_01	7096595	b_b	a_a
@@ -53525,289 +53811,3 @@ Scaffold_01	7174022	b_b	a_a
 Scaffold_01	7174030	b_b	a_a
 Scaffold_01	7174034	b_b	a_a
 Scaffold_01	7174072	b_b	a_a
-Scaffold_01	390484		a_a
-Scaffold_01	699161		a_a
-Scaffold_01	1638385		a_a
-Scaffold_01	1637795		a_a
-Scaffold_01	1244857		a_a
-Scaffold_01	6884343		a_a
-Scaffold_01	1653035		a_a
-Scaffold_01	2312163		a_a
-Scaffold_01	6763112		a_a
-Scaffold_01	6855152		a_a
-Scaffold_01	3839932		a_a
-Scaffold_01	395644		a_a
-Scaffold_01	420127		a_a
-Scaffold_01	209136		a_a
-Scaffold_01	6790850		a_a
-Scaffold_01	2261392		a_a
-Scaffold_01	969568		a_a
-Scaffold_01	3781038		a_a
-Scaffold_01	7016671		a_a
-Scaffold_01	1465394		a_a
-Scaffold_01	605609		a_a
-Scaffold_01	3076459		a_a
-Scaffold_01	691965		a_a
-Scaffold_01	1297115		a_a
-Scaffold_01	1681627		a_a
-Scaffold_01	878611		a_a
-Scaffold_01	1254798		a_a
-Scaffold_01	1254801		a_a
-Scaffold_01	6768297		a_a
-Scaffold_01	618044		a_a
-Scaffold_01	6765902		a_a
-Scaffold_01	7036068		a_a
-Scaffold_01	6768312		a_a
-Scaffold_01	1775270		a_a
-Scaffold_01	548948		a_a
-Scaffold_01	2212019		a_a
-Scaffold_01	596584		a_a
-Scaffold_01	1416092		a_a
-Scaffold_01	1313031		a_a
-Scaffold_01	6768285		a_a
-Scaffold_01	178135		a_a
-Scaffold_01	6763213		a_a
-Scaffold_01	332795		a_a
-Scaffold_01	3839400		a_a
-Scaffold_01	1572850		a_a
-Scaffold_01	678522		a_a
-Scaffold_01	1594680		a_a
-Scaffold_01	4378691		a_a
-Scaffold_01	361399		a_a
-Scaffold_01	5038542		a_a
-Scaffold_01	1648402		a_a
-Scaffold_01	696536		a_a
-Scaffold_01	4031259		a_a
-Scaffold_01	1017945		a_a
-Scaffold_01	6855917		a_a
-Scaffold_01	4539941		a_a
-Scaffold_01	1139580		a_a
-Scaffold_01	3428886		a_a
-Scaffold_01	321247		a_a
-Scaffold_01	3136856		a_a
-Scaffold_01	243115		a_a
-Scaffold_01	1765579		a_a
-Scaffold_01	1233936		a_a
-Scaffold_01	351461		a_a
-Scaffold_01	6765903		a_a
-Scaffold_01	4378663		a_a
-Scaffold_01	4754685		a_a
-Scaffold_01	5326355		a_a
-Scaffold_01	686162		a_a
-Scaffold_01	728818		a_a
-Scaffold_01	387007		a_a
-Scaffold_01	206009		a_a
-Scaffold_01	121192		a_a
-Scaffold_01	3624668		a_a
-Scaffold_01	3836767		a_a
-Scaffold_01	2316747		a_a
-Scaffold_01	686437		a_a
-Scaffold_01	6821743		a_a
-Scaffold_01	5378368		a_a
-Scaffold_01	1150735		a_a
-Scaffold_01	1136235		a_a
-Scaffold_01	1420230		a_a
-Scaffold_01	770529		a_a
-Scaffold_01	7036197		a_a
-Scaffold_01	6836287		a_a
-Scaffold_01	744868		a_a
-Scaffold_01	5302094		a_a
-Scaffold_01	618073		a_a
-Scaffold_01	4575553		a_a
-Scaffold_01	254004		a_a
-Scaffold_01	1457476		a_a
-Scaffold_01	549012		a_a
-Scaffold_01	6771689		a_a
-Scaffold_01	6768696		a_a
-Scaffold_01	6790827		a_a
-Scaffold_01	605575		a_a
-Scaffold_01	7016243		a_a
-Scaffold_01	49990		a_a
-Scaffold_01	6738712		a_a
-Scaffold_01	776116		a_a
-Scaffold_01	618033		a_a
-Scaffold_01	1155976		a_a
-Scaffold_01	7045334		a_a
-Scaffold_01	1203133		a_a
-Scaffold_01	2118791		a_a
-Scaffold_01	3494713		a_a
-Scaffold_01	7042774		a_a
-Scaffold_01	6763323		a_a
-Scaffold_01	6768274		a_a
-Scaffold_01	3714316		a_a
-Scaffold_01	551900		a_a
-Scaffold_01	3458552		a_a
-Scaffold_01	3458387		a_a
-Scaffold_01	426189		a_a
-Scaffold_01	1480496		a_a
-Scaffold_01	721752		a_a
-Scaffold_01	3611202		a_a
-Scaffold_01	549182		a_a
-Scaffold_01	1251846		a_a
-Scaffold_01	487797		a_a
-Scaffold_01	1313105		a_a
-Scaffold_01	770142		a_a
-Scaffold_01	317472		a_a
-Scaffold_01	3184820		a_a
-Scaffold_01	1571048		a_a
-Scaffold_01	297545		a_a
-Scaffold_01	618034		a_a
-Scaffold_01	178769		a_a
-Scaffold_01	351492		a_a
-Scaffold_01	6768499		a_a
-Scaffold_01	7007182		a_a
-Scaffold_01	7094480		a_a
-Scaffold_01	1694773		a_a
-Scaffold_01	1756648		a_a
-Scaffold_01	4890396		a_a
-Scaffold_01	1343430		a_a
-Scaffold_01	3989944		a_a
-Scaffold_01	549389		a_a
-Scaffold_01	4574130		a_a
-Scaffold_01	3458558		a_a
-Scaffold_01	5378369		a_a
-Scaffold_01	4885015		a_a
-Scaffold_01	549330		a_a
-Scaffold_01	1282191		a_a
-Scaffold_01	6738723		a_a
-Scaffold_01	6771754		a_a
-Scaffold_01	1458465		a_a
-Scaffold_01	893673		a_a
-Scaffold_01	1728050		a_a
-Scaffold_01	1744104		a_a
-Scaffold_01	6844008		a_a
-Scaffold_01	1570063		a_a
-Scaffold_01	3195474		a_a
-Scaffold_01	916657		a_a
-Scaffold_01	696705		a_a
-Scaffold_01	1313062		a_a
-Scaffold_01	612950		a_a
-Scaffold_01	1669491		a_a
-Scaffold_01	1568820		a_a
-Scaffold_01	3836773		a_a
-Scaffold_01	365438		a_a
-Scaffold_01	675220		a_a
-Scaffold_01	2359413		a_a
-Scaffold_01	6844720		a_a
-Scaffold_01	6772667		a_a
-Scaffold_01	2479650		a_a
-Scaffold_01	6771027		a_a
-Scaffold_01	2276582		a_a
-Scaffold_01	381966		a_a
-Scaffold_01	7094420		a_a
-Scaffold_01	1490184		a_a
-Scaffold_01	6759605		a_a
-Scaffold_01	6855361		a_a
-Scaffold_01	768985		a_a
-Scaffold_01	7094610		a_a
-Scaffold_01	62411		a_a
-Scaffold_01	1756645		a_a
-Scaffold_01	254111		a_a
-Scaffold_01	3234228		a_a
-Scaffold_01	1761482		a_a
-Scaffold_01	3610945		a_a
-Scaffold_01	158904		a_a
-Scaffold_01	1648429		a_a
-Scaffold_01	1569665		a_a
-Scaffold_01	286310		a_a
-Scaffold_01	166263		a_a
-Scaffold_01	1569711		a_a
-Scaffold_01	332787		a_a
-Scaffold_01	3147856		a_a
-Scaffold_01	34347		a_a
-Scaffold_01	3891641		a_a
-Scaffold_01	1694640		a_a
-Scaffold_01	216288		a_a
-Scaffold_01	953196		a_a
-Scaffold_01	1566663		a_a
-Scaffold_01	6768294		a_a
-Scaffold_01	2088648		a_a
-Scaffold_01	1653602		a_a
-Scaffold_01	561405		a_a
-Scaffold_01	68497		a_a
-Scaffold_01	6884647		a_a
-Scaffold_01	549369		a_a
-Scaffold_01	1656506		a_a
-Scaffold_01	6821720		a_a
-Scaffold_01	47755		a_a
-Scaffold_01	425798		a_a
-Scaffold_01	994073		a_a
-Scaffold_01	334247		a_a
-Scaffold_01	1570069		a_a
-Scaffold_01	1677488		a_a
-Scaffold_01	6768398		a_a
-Scaffold_01	1648386		a_a
-Scaffold_01	365398		a_a
-Scaffold_01	1592761		a_a
-Scaffold_01	168272		a_a
-Scaffold_01	1162766		a_a
-Scaffold_01	387375		a_a
-Scaffold_01	7035789		a_a
-Scaffold_01	6771026		a_a
-Scaffold_01	40745		a_a
-Scaffold_01	6821749		a_a
-Scaffold_01	255645		a_a
-Scaffold_01	6830730		a_a
-Scaffold_01	122637		a_a
-Scaffold_01	3147891		a_a
-Scaffold_01	2209909		a_a
-Scaffold_01	387467		a_a
-Scaffold_01	414346		a_a
-Scaffold_01	393777		a_a
-Scaffold_01	3384241		a_a
-Scaffold_01	6768509		a_a
-Scaffold_01	127451		a_a
-Scaffold_01	3458446		a_a
-Scaffold_01	1730706		a_a
-Scaffold_01	6821978		a_a
-Scaffold_01	185985		a_a
-Scaffold_01	213503		a_a
-Scaffold_01	56745		a_a
-Scaffold_01	549426		a_a
-Scaffold_01	878590		a_a
-Scaffold_01	1732450		a_a
-Scaffold_01	7035767		a_a
-Scaffold_01	3428819		a_a
-Scaffold_01	254130		a_a
-Scaffold_01	6844188		a_a
-Scaffold_01	3458644		a_a
-Scaffold_01	4890395		a_a
-Scaffold_01	3611691		a_a
-Scaffold_01	3458433		a_a
-Scaffold_01	1068132		a_a
-Scaffold_01	6772662		a_a
-Scaffold_01	3144224		a_a
-Scaffold_01	6770380		a_a
-Scaffold_01	1656817		a_a
-Scaffold_01	6771739		a_a
-Scaffold_01	4702113		a_a
-Scaffold_01	1340975		a_a
-Scaffold_01	1592788		a_a
-Scaffold_01	4378673		a_a
-Scaffold_01	1672004		a_a
-Scaffold_01	7095232		a_a
-Scaffold_01	655020		a_a
-Scaffold_01	317050		a_a
-Scaffold_01	6771711		a_a
-Scaffold_01	4575555		a_a
-Scaffold_01	34290		a_a
-Scaffold_01	7006052		a_a
-Scaffold_01	1136330		a_a
-Scaffold_01	6843544		a_a
-Scaffold_01	178344		a_a
-Scaffold_01	6821885		a_a
-Scaffold_01	6768694		a_a
-Scaffold_01	124023		a_a
-Scaffold_01	3989947		a_a
-Scaffold_01	6821872		a_a
-Scaffold_01	1608015		a_a
-Scaffold_01	1637802		a_a
-Scaffold_01	3147948		a_a
-Scaffold_01	395693		a_a
-Scaffold_01	1108146		a_a
-Scaffold_01	6768352		a_a
-Scaffold_01	1759687		a_a
-Scaffold_01	3147886		a_a
-Scaffold_01	1569933		a_a
-Scaffold_01	3428870		a_a
-Scaffold_01	3839396		a_a

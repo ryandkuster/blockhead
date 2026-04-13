@@ -10,8 +10,8 @@ requires-python = ">=3.12"
 dependencies = [
     "polars==1.35.0",
     "matplotlib>=3.10.7",
-    "pandas==2.3.3",
     "numpy==2.3.4",
+    "cyvcf2>=0.31",
 ]
 
 [project.scripts]
