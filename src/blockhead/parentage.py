@@ -18,7 +18,7 @@ def get_parentage(args):
             parent_dt[p1].append(f1)
             parent_dt[p2].append(f1)
             cross_ls.append((p1, p2))
-    
+
     cross_ls = list(set(cross_ls))
 
     return parent_dt, cross_ls, named_f1_dt
@@ -63,7 +63,7 @@ def get_advanced_lineage(adv, named_f1_dt):
         else:
             p3 = i
             # print(f"{i} is p3")
-    
+
     lin_dt = {"adv" : adv,
               "f1"  : f1,
               "p1"  : p1,
