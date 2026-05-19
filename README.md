@@ -2,6 +2,8 @@
 
 Blockhead was designed for the analysis of trios in "Benchmarking SNP-Calling Accuracy Against Known Citrus Pedigrees Reveals Pangenome Advantages Over Linear References". It's functionality for calculated vcf-specific trio accuracy using MIER should apply to all datasets with trio data. It's advanced functionality to determine haplotype blocks `blockmode` is currently only available to third generation samples where all first (grandparental) and second generational (F1) lines are included.
 
+If you have any questions on the use of or desired functionality for blockhead, please contact Ryan Kuster (rkuster@utk.edu).
+
 ## Installation
 
 Install UV for an easy experience:
@@ -33,7 +35,7 @@ pipx install -e .
 
 ### VCF
 
-Blockhead expects a **biallelic-SNP-only VCF**. Multi-allelic sites and indels are skipped automatically.
+Blockhead expects a VCF with at most one ALT allele per site. Multi-allelic sites (comma in the ALT field) are skipped automatically; indels and longer sequences are retained.
 
 For parallel execution (`--threads > 1`) the VCF must have an index (`.csi`). Without one, blockhead falls back to single-threaded streaming with a warning. If compressed, only bgzipped inputs are handled, not gzipped.
 
@@ -54,6 +56,18 @@ ab_c2   c_c     a_b
 ```
 
 Here `a_b` is both an F1 in row 1 and a parent in rows 2–3, making `ab_c1` and `ab_c2` advanced hybrids.
+
+#### F1 sibling crosses
+
+Two F1s that share the same original parents can themselves be crossed. Blockhead detects this automatically when both parents of a child are F1s with identical grandparents:
+
+```
+a_b1    a_a     b_b
+a_b2    a_a     b_b
+a_b12   a_b1    a_b2
+```
+
+Here `a_b1` and `a_b2` are both F1s from the same `a_a × b_b` cross. Their offspring `a_b12` is an F1 sibling cross. Blockhead treats it separately from a standard advanced hybrid: informative sites require both F1 parents to be heterozygous, and child genotype is assigned to the grandparent (p1 or p2) whose homozygous state it matches. Heterozygous children are excluded as ambiguous. F1 sibling crosses produce their own set of output files (see `--blockmode` outputs below).
 
 ### Colors file (`--colors`)
 
@@ -118,7 +132,9 @@ blockhead \
     --colors tests/input/adv_test_1_colors.tsv
 ```
 
-**Additional output:** one PNG per chromosome — `<chrom>_<N>_haplotypes.png`
+**Additional outputs:**
+- `<chrom>_<N>_haplotypes.png` — haplotype plot per chromosome (standard advanced hybrids)
+- `<chrom>_<N>_f1_cross_haplotypes.png` — haplotype plot per chromosome (F1 sibling crosses, when present)
 
 ### Smoothing (`--smooth`)
 
@@ -139,6 +155,9 @@ blockhead \
 - `<chrom>_<N>_haplotypes_smooth.png` — smoothed haplotype plot per chromosome
 - `<chrom>_<N>_haplotypes_breaks.png` — breakpoint histogram per chromosome
 - `<N>_haplotypes_<smooth>_smooth_blocks.tsv` — per-position smoothed block assignments across all chromosomes
+- `<chrom>_<N>_f1_cross_haplotypes_smooth.png` — smoothed haplotype plot for F1 sibling crosses (when present)
+- `<chrom>_<N>_f1_cross_haplotypes_breaks.png` — breakpoint histogram for F1 sibling crosses (when present)
+- `<N>_f1_cross_haplotypes_<smooth>_smooth_blocks.tsv` — smoothed block assignments for F1 sibling crosses (when present)
 
 ### Block assessment (`--assess`)
 
@@ -155,7 +174,9 @@ blockhead \
     --colors tests/input/adv_test_1_colors.tsv
 ```
 
-**Additional output:** `<N>_haplotypes_assess_blocks.tsv`
+**Additional output:**
+- `<N>_haplotypes_assess_blocks.tsv` — block accuracy assessment for standard advanced hybrids
+- `<N>_f1_cross_haplotypes_assess_blocks.tsv` — block accuracy assessment for F1 sibling crosses (when present)
 
 ### Wrong call analysis (`--wrong_calls`)
 
@@ -176,17 +197,29 @@ blockhead \
 - `<windows>_windows_wrong_calls.tsv` — wrong call counts binned by genomic window
 - `<chrom>_<N>_<window>_wrong_calls.png` — wrong call plot per chromosome
 
+### Quality filtering (`--quality`)
+
+Skip variants whose QUAL score falls below a minimum value. By default no quality filter is applied:
+
+```bash
+blockhead \
+    --parentage tests/input/adv_test_1_parentage.tsv \
+    --vcf tests/input/adv_test_1.vcf.gz \
+    --outdir output/ \
+    --quality 30
+```
+
 ## All options
 
 ```
 usage: blockhead [-h] -p PARENTAGE -v VCF -d OUTDIR [-o] [-t THREADS]
-                 [-n NON_MISSING] [-x THRESHOLD] [-b] [-s SMOOTH]
+                 [-n NON_MISSING] [-x THRESHOLD] [-q QUALITY] [-b] [-s SMOOTH]
                  [-a ASSESS] [-w] [-c COLORS] [-k BREAKS]
 
 options:
   -h, --help                    show this help message and exit
   -p, --parentage PARENTAGE     tsv parentage file
-  -v, --vcf VCF                 biallelic only SNP input vcf file
+  -v, --vcf VCF                 input vcf file
   -d, --outdir OUTDIR           output directory for all files
   -o, --outvcf                  write a VCF of threshold-filtered variants
   -t, --threads THREADS         worker threads; requires tabix index for >1
@@ -194,6 +227,8 @@ options:
                                 required to keep a variant (0–1, default 0)
   -x, --threshold THRESHOLD     proportion of trios with correct calls
                                 required to keep a variant (0–1, default 0)
+  -q, --quality QUALITY         minimum QUAL score; variants below this value
+                                are skipped (default: no filter)
   -b, --blockmode               perform haplotype block inference
   -s, --smooth SMOOTH           median filter half-window size in SNPs
   -a, --assess ASSESS           truth TSV for block assessment

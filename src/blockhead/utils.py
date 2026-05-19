@@ -41,6 +41,11 @@ def parse_user_input():
     parser.add_argument('-c', '--colors', type=str, required=False,
                         help='optional colors file for haplotype blocks')
 
+    parser.add_argument('-q', '--quality', type=int, required=False,
+                        default=None,
+                        help='minimum variant QUAL score to retain (VCF field 6); '
+                             'variants below this value are excluded')
+
     parser.add_argument('-k', '--breaks', type=int, required=False,
                         default=1000000, help='break size for wrong call windows')
 

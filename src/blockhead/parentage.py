@@ -37,13 +37,44 @@ def get_sample_ls(named_f1_dt: dict):
     return sample_ls
 
 
+def get_f1_sibling_crosses(named_f1_dt):
+    """
+    Detect cases where two F1s that share the same original parents are
+    crossed with each other (e.g., F1a × F1b where both have parents P1/P2).
+    These are distinct from standard advanced hybrids (F1 × unrelated).
+
+    Returns a list of dicts with keys: child, f1a, f1b, p1, p2.
+    """
+    f1_sibling_crosses = []
+    for child, (pa, pb) in named_f1_dt.items():
+        if pa in named_f1_dt and pb in named_f1_dt:
+            if set(named_f1_dt[pa]) == set(named_f1_dt[pb]):
+                p1, p2 = named_f1_dt[pa]
+                f1_sibling_crosses.append({
+                    "child": child,
+                    "f1a":   pa,
+                    "f1b":   pb,
+                    "p1":    p1,
+                    "p2":    p2,
+                })
+    return f1_sibling_crosses
+
+
 def get_advanced(named_f1_dt):
     """
     Find the advanced hybrids based on parental tsv input.
+    Excludes F1×F1 sibling crosses (detected separately by
+    get_f1_sibling_crosses), which would otherwise cause
+    get_advanced_lineage to fail.
     """
+    f1_sibling_children = {
+        d["child"] for d in get_f1_sibling_crosses(named_f1_dt)
+    }
     adv_ls = []
 
     for k, v in named_f1_dt.items():
+        if k in f1_sibling_children:
+            continue
         for vi in v:
             if vi in named_f1_dt.keys():
                 adv_ls.append(k)

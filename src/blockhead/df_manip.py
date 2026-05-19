@@ -20,7 +20,7 @@ MIER_INCORRECT = 2
 MIER_MISSING = 3
 
 
-def fetch_chrom(vcf_path, chrom, sample_names, threads=1):
+def fetch_chrom(vcf_path, chrom, sample_names, threads=1, min_qual=None):
     """
     Fetch a single chromosome from a tabix-indexed VCF.
     Returns (pos_arr, gts_matrix) or (None, None) if no biallelic SNPs found.
@@ -40,8 +40,12 @@ def fetch_chrom(vcf_path, chrom, sample_names, threads=1):
     n = 0
 
     for variant in vcf(chrom):
-        if (len(variant.REF) != 1 or len(variant.ALT) != 1
-                or len(variant.ALT[0]) != 1):
+        # if (len(variant.REF) != 1 or len(variant.ALT) != 1
+        #         or len(variant.ALT[0]) != 1):
+        #     continue
+        if len(variant.ALT) != 1:  # exclude multiallelic sites (comma in ALT field)
+            continue
+        if min_qual is not None and (variant.QUAL is None or variant.QUAL < min_qual):
             continue
         if n >= len(pos_buf):
             new_size = len(pos_buf) * 2
@@ -57,7 +61,7 @@ def fetch_chrom(vcf_path, chrom, sample_names, threads=1):
     return pos_buf[:n].copy(), gts_buf[:n].copy()
 
 
-def stream_chromosomes(vcf_path, sample_names, threads=1):
+def stream_chromosomes(vcf_path, sample_names, threads=1, min_qual=None):
     """
     Generator yielding (chrom, pos_array, gts_matrix) for each chromosome.
     gts_matrix shape: (n_variants, n_samples), dtype uint8
@@ -90,10 +94,14 @@ def stream_chromosomes(vcf_path, sample_names, threads=1):
     print("streaming vcf", flush=True)
     for variant in vcf:
         total_variants += 1
-        if (len(variant.REF) != 1 or len(variant.ALT) != 1
-                or len(variant.ALT[0]) != 1):
+        # if (len(variant.REF) != 1 or len(variant.ALT) != 1
+        #         or len(variant.ALT[0]) != 1):
+        #     continue
+        if len(variant.ALT) != 1:  # exclude multiallelic sites (comma in ALT field)
             continue
         biallelic_count += 1
+        if min_qual is not None and (variant.QUAL is None or variant.QUAL < min_qual):
+            continue
 
         chrom = variant.CHROM
         if chrom != current_chrom:
@@ -186,6 +194,77 @@ def infer_haplotypes(pos_arr, gts_matrix, sample_idx_in_matrix, mier_dict, lin_d
                     np.where(parent_type == p2_f, lin_dt["p2"], "unknown"))
 
     return pos_f, parent_origin
+
+
+def infer_haplotypes_f1_cross(pos_arr, gts_matrix, sample_idx_in_matrix,
+                              mier_dict, f1_cross_dt):
+    """
+    Haplotype inference for F1×F1 sibling crosses.
+
+    Informative sites require:
+      - p1/p2 homozygous-opposite (one HOM_REF, one HOM_ALT)
+      - both f1a and f1b heterozygous at the site
+      - MIER-correct calls for both f1a and f1b
+      - child homozygous (HOM_REF or HOM_ALT) — HET is ambiguous and excluded
+
+    Parent origin is assigned by matching the child's homozygous genotype to
+    whichever of p1/p2 carries the same genotype at that site.
+    """
+    p1_col    = gts_matrix[:, sample_idx_in_matrix[f1_cross_dt["p1"]]]
+    p2_col    = gts_matrix[:, sample_idx_in_matrix[f1_cross_dt["p2"]]]
+    f1a_col   = gts_matrix[:, sample_idx_in_matrix[f1_cross_dt["f1a"]]]
+    f1b_col   = gts_matrix[:, sample_idx_in_matrix[f1_cross_dt["f1b"]]]
+    child_col = gts_matrix[:, sample_idx_in_matrix[f1_cross_dt["child"]]]
+    mier_f1a  = mier_dict[f1_cross_dt["f1a"]]
+    mier_f1b  = mier_dict[f1_cross_dt["f1b"]]
+
+    mask = (
+        (((p1_col == HOM_REF) & (p2_col == HOM_ALT)) |
+         ((p1_col == HOM_ALT) & (p2_col == HOM_REF))) &
+        (f1a_col  == HET) &
+        (f1b_col  == HET) &
+        (mier_f1a == MIER_CORRECT) &
+        (mier_f1b == MIER_CORRECT) &
+        ((child_col == HOM_REF) | (child_col == HOM_ALT))
+    )
+
+    pos_f   = pos_arr[mask]
+    child_f = child_col[mask]
+    p1_f    = p1_col[mask]
+    p2_f    = p2_col[mask]
+
+    parent_origin = np.where(child_f == p1_f, f1_cross_dt["p1"],
+                    np.where(child_f == p2_f, f1_cross_dt["p2"], "unknown"))
+
+    return pos_f, parent_origin
+
+
+def compute_hap_data_f1_cross(f1_sibling_crosses, pos_arr, gts_matrix,
+                               sample_idx_in_matrix, mier_dict):
+    """
+    Like compute_hap_data but for F1×F1 sibling crosses.
+    Worker-safe: no matplotlib, no Polars.
+
+    Returns a dict:
+      {
+        'max_pos':      int,
+        'cross_results': [(f1_cross_dt, pos_f, parent_int8), ...]
+      }
+    where parent_int8 encodes 0=p1, 1=p2, 2=unknown.
+    """
+    cross_results = []
+    for f1_cross_dt in f1_sibling_crosses:
+        pos_f, parent_origin = infer_haplotypes_f1_cross(
+            pos_arr, gts_matrix, sample_idx_in_matrix, mier_dict, f1_cross_dt)
+        parent_int8 = np.full(len(pos_f), 2, dtype=np.int8)
+        parent_int8[parent_origin == f1_cross_dt["p1"]] = 0
+        parent_int8[parent_origin == f1_cross_dt["p2"]] = 1
+        cross_results.append((f1_cross_dt, pos_f, parent_int8))
+
+    return {
+        'max_pos':      int(pos_arr.max()) if len(pos_arr) > 0 else 0,
+        'cross_results': cross_results,
+    }
 
 
 def compute_hap_data(adv_ls, named_f1_dt, pos_arr, gts_matrix,
@@ -376,7 +455,175 @@ def build_block_dfs(args, adv_ls, named_f1_dt, chrom, hap_data, truth_df=None):
     return block_df_chrom, wrong_df_chrom
 
 
-def write_filtered_vcf(args, passing_positions):
+def plot_haplotypes_f1_cross(args, f1_sibling_crosses, chrom,
+                              hap_data_f1_cross, colors_dt, truth_df=None):
+    """
+    Like plot_haplotypes but for F1×F1 sibling crosses.
+    Columns: haplotype track | F1a color swatch | F1b color swatch.
+    """
+    n = len(f1_sibling_crosses)
+    alpha_val = 0.5
+    recomb_ls = []
+
+    fig, axes = plt.subplots(
+        nrows=n, ncols=3, sharex='col',
+        figsize=(32, n / 3),
+        gridspec_kw={'hspace': 0.3, 'width_ratios': [90, 1, 1], 'wspace': 0.03},
+        squeeze=False,
+    )
+
+    max_pos = hap_data_f1_cross['max_pos']
+    x_ticks = list(range(0, max_pos, 5_000_000))
+    tick_labels = [f'{x/1e6:.0f}Mb' if x != 0 else '0' for x in x_ticks]
+
+    from matplotlib.colors import to_rgba
+    rgba_cache = {name: to_rgba(col) for name, col in colors_dt.items()}
+
+    for idx, (f1_cross_dt, pos_f, parent_int8) in \
+            enumerate(hap_data_f1_cross['cross_results']):
+        child = f1_cross_dt["child"]
+        print(f"  processing f1 sibling cross: {child}", flush=True)
+
+        parent_origin = np.where(parent_int8 == 0, f1_cross_dt["p1"],
+                        np.where(parent_int8 == 1, f1_cross_dt["p2"], "unknown"))
+
+        if args.smooth:
+            s_arr     = np.where(parent_origin == f1_cross_dt["p1"], 0, 2)
+            s_new     = median_filter(s_arr, args.smooth)
+            y_new_arr = np.where(s_new == 0, f1_cross_dt["p1"], f1_cross_dt["p2"])
+            process_diffs(pos_f, parent_origin, y_new_arr)
+            recomb_ls += break_points(pos_f, y_new_arr)
+            label_arr = y_new_arr
+            c1 = rgba_cache[f1_cross_dt["p1"]]
+            c2 = rgba_cache[f1_cross_dt["p2"]]
+            plot_x = pos_f
+        else:
+            label_arr = parent_origin
+            c1 = rgba_cache[f1_cross_dt["p1"]]
+            c2 = rgba_cache[f1_cross_dt["p2"]]
+            plot_x = pos_f
+
+        y_zeros = np.zeros(len(plot_x), dtype=np.float32)
+        mask_p1 = (label_arr == f1_cross_dt["p1"])
+        for sel, col_val in ((mask_p1, c1), (~mask_p1, c2)):
+            if sel.any():
+                axes[idx, 0].scatter(plot_x[sel], y_zeros[sel], s=500, marker="|",
+                                     color=col_val, alpha=alpha_val, rasterized=True)
+        axes[idx, 0].set_yticks([])
+        axes[idx, 0].set_ylabel(f"{child}", labelpad=100, va="center",
+                                ha="left", rotation=0)
+        axes[idx, 1].set_facecolor(colors_dt[f1_cross_dt["f1a"]])
+        axes[idx, 2].set_facecolor(colors_dt[f1_cross_dt["f1b"]])
+
+    for idx in range(n):
+        for col in (1, 2):
+            axes[idx, col].set_yticklabels([])
+            axes[idx, col].set_yticks([])
+            axes[idx, col].set_xticklabels([])
+            axes[idx, col].set_xticks([])
+
+    for ax in axes:
+        ax[0].autoscale(enable=True, axis='x', tight=True)
+
+    axes[0, 0].set_title(f"{chrom}", pad=20)
+    axes[0, 1].set_title("F1a", pad=20)
+    axes[0, 2].set_title("F1b", pad=20)
+    axes[-1, 0].set_xticks(x_ticks)
+    axes[-1, 0].set_xticklabels(tick_labels)
+
+    if not args.smooth:
+        img_path = os.path.join(args.outdir,
+                                f"{chrom}_{n}_f1_cross_haplotypes.png")
+        print(f"  saving {img_path}", flush=True)
+        plt.savefig(img_path, dpi=300, bbox_inches="tight")
+    else:
+        img_path = os.path.join(args.outdir,
+                                f"{chrom}_{n}_f1_cross_haplotypes_smooth.png")
+        print(f"  saving {img_path}", flush=True)
+        plt.savefig(img_path, dpi=300, bbox_inches="tight")
+
+        img_path = os.path.join(args.outdir,
+                                f"{chrom}_{n}_f1_cross_haplotypes_breaks.png")
+        fig.subplots_adjust(top=0.8)
+        pos0 = axes[0, 0].get_position()
+        hist_ax = fig.add_axes(
+            [pos0.x0, pos0.y0 + pos0.height * 1.05, pos0.width, 0.15])
+        bin_no = int(max_pos // 1e6) * 2
+        hist_ax.hist(recomb_ls, bins=bin_no, range=(0, max_pos), color="grey")
+        hist_ax.xaxis.set_visible(False)
+        hist_ax.margins(x=0)
+        hist_ax.set_title(f"{chrom}", pad=20)
+        print(f"  saving {img_path}", flush=True)
+        plt.savefig(img_path, dpi=300, bbox_inches="tight")
+
+    plt.close(fig)
+
+
+def build_block_dfs_f1_cross(args, f1_sibling_crosses, chrom,
+                              hap_data_f1_cross, truth_df=None):
+    """
+    Like build_block_dfs but for F1×F1 sibling crosses.
+    Returns (block_df_chrom, wrong_df_chrom); either may be None.
+    """
+    smooth_collected = []
+    assess_collected = []
+
+    for f1_cross_dt, pos_f, parent_int8 in hap_data_f1_cross['cross_results']:
+        child = f1_cross_dt["child"]
+        parent_origin = np.where(parent_int8 == 0, f1_cross_dt["p1"],
+                        np.where(parent_int8 == 1, f1_cross_dt["p2"], "unknown"))
+
+        if args.smooth:
+            s_arr     = np.where(parent_origin == f1_cross_dt["p1"], 0, 2)
+            s_new     = median_filter(s_arr, args.smooth)
+            y_new_arr = np.where(s_new == 0, f1_cross_dt["p1"], f1_cross_dt["p2"])
+            smooth_collected.append((pos_f, y_new_arr, child))
+
+        if args.assess and truth_df is not None:
+            x = pos_f.tolist()
+            y = parent_origin.tolist()
+            child_truth_df = truth_df.filter(
+                pl.col(child).is_not_null()).sort(["CHROM", "POS"])
+            truth_x = child_truth_df.filter(
+                pl.col("CHROM") == chrom)["POS"].to_list()
+            truth_y = child_truth_df.filter(
+                pl.col("CHROM") == chrom)[child].to_list()
+            new_x, new_y = assess_blocks(x, y, truth_x, truth_y)
+            assess_collected.append((np.asarray(new_x), np.asarray(new_y), child))
+
+    block_df_chrom = None
+    wrong_df_chrom = None
+
+    if smooth_collected:
+        from functools import reduce
+        dfs = [
+            pl.DataFrame({"POS": pl.Series("POS", pos_c),
+                          child_c: pl.Series(child_c, y_c.tolist())})
+            for pos_c, y_c, child_c in smooth_collected
+        ]
+        merged = reduce(
+            lambda a, b: a.join(b, on="POS", how="outer", coalesce=True), dfs)
+        block_df_chrom = merged.with_columns(pl.lit(chrom).alias("CHROM")) \
+                               .select(["CHROM", "POS"] + [c[2] for c in smooth_collected]) \
+                               .sort("POS")
+
+    if assess_collected:
+        from functools import reduce
+        dfs = [
+            pl.DataFrame({"POS": pl.Series("POS", x_c.astype(np.int32)),
+                          child_c: pl.Series(child_c, y_c.tolist())})
+            for x_c, y_c, child_c in assess_collected
+        ]
+        merged = reduce(
+            lambda a, b: a.join(b, on="POS", how="outer", coalesce=True), dfs)
+        wrong_df_chrom = merged.with_columns(pl.lit(chrom).alias("CHROM")) \
+                               .select(["CHROM", "POS"] + [c[2] for c in assess_collected]) \
+                               .sort("POS")
+
+    return block_df_chrom, wrong_df_chrom
+
+
+
     """Second streaming pass: write variants at passing (chrom, pos) positions."""
     from cyvcf2 import VCF, Writer
     vcf_in = VCF(args.vcf, strict_gt=False)

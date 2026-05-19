@@ -25,12 +25,13 @@ def _write_mier_summary(path, counts):
 
 
 def _compute_chrom(chrom, pos_arr, gts_matrix, sample_idx_in_matrix,
-                   named_f1_dt, adv_ls, args):
+                   named_f1_dt, adv_ls, f1_sibling_crosses, args):
     """
     Core per-chromosome computation given pre-loaded pos_arr and gts_matrix.
     Worker-safe: no matplotlib, no colors_dt, no truth_df.
     Returns (chrom, partial_mier, partial_hom, passing_pos_set, extra).
-    extra is hap_data (blockmode) or wrong_df_c (wrong_calls) or None.
+    extra is (hap_data, hap_data_f1_cross) (blockmode), wrong_df_c
+    (wrong_calls), or None.
     """
     mier_dict = {}
     partial_mier = {f1: [0, 0, 0] for f1 in named_f1_dt}
@@ -73,41 +74,59 @@ def _compute_chrom(chrom, pos_arr, gts_matrix, sample_idx_in_matrix,
     passing_pos = {int(p) for p in pos_arr[pass_mask]}
 
     hap_data = None
-    if args.blockmode and len(adv_ls) > 0:
+    hap_data_f1_cross = None
+    if args.blockmode:
         filtered_mier_dict = {f1: mier_dict[f1][pass_mask] for f1 in named_f1_dt}
-        hap_data = dm.compute_hap_data(
-            adv_ls, named_f1_dt, pos_arr[pass_mask], gts_matrix[pass_mask],
-            sample_idx_in_matrix, filtered_mier_dict,
-        )
+        if len(adv_ls) > 0:
+            hap_data = dm.compute_hap_data(
+                adv_ls, named_f1_dt, pos_arr[pass_mask], gts_matrix[pass_mask],
+                sample_idx_in_matrix, filtered_mier_dict,
+            )
+        if len(f1_sibling_crosses) > 0:
+            hap_data_f1_cross = dm.compute_hap_data_f1_cross(
+                f1_sibling_crosses, pos_arr[pass_mask], gts_matrix[pass_mask],
+                sample_idx_in_matrix, filtered_mier_dict,
+            )
 
-    return chrom, partial_mier, partial_hom, passing_pos, hap_data
+    extra = (hap_data, hap_data_f1_cross) if args.blockmode else None
+    return chrom, partial_mier, partial_hom, passing_pos, extra
 
 
 def _fetch_and_compute(vcf_path, chrom, sample_ls, sample_idx_in_matrix,
-                       named_f1_dt, adv_ls, args):
+                       named_f1_dt, adv_ls, f1_sibling_crosses, args):
     """
     Worker for ProcessPoolExecutor: fetches chromosome via tabix then computes.
     Must be top-level for pickling.  No matplotlib state is touched here.
     """
-    pos_arr, gts_matrix = dm.fetch_chrom(vcf_path, chrom, sample_ls)
+    pos_arr, gts_matrix = dm.fetch_chrom(vcf_path, chrom, sample_ls,
+                                          min_qual=args.quality)
     if pos_arr is None:
+        empty_extra = (None, None) if args.blockmode else None
         return chrom, {f1: [0, 0, 0] for f1 in named_f1_dt}, \
-               {f1: [0, 0, 0] for f1 in named_f1_dt}, set(), None
+               {f1: [0, 0, 0] for f1 in named_f1_dt}, set(), empty_extra
 
     return _compute_chrom(chrom, pos_arr, gts_matrix, sample_idx_in_matrix,
-                          named_f1_dt, adv_ls, args)
+                          named_f1_dt, adv_ls, f1_sibling_crosses, args)
 
 
-def _plot_chrom(args, adv_ls, named_f1_dt, chrom, hap_data, colors_dt, truth_df):
+def _plot_chrom(args, adv_ls, named_f1_dt, f1_sibling_crosses,
+                chrom, hap_data, hap_data_f1_cross, colors_dt, truth_df):
     """
     Plot worker: renders and saves figures for one chromosome.
     Returns only chrom (a small string) — no DataFrames cross the IPC pipe,
     which avoids the pipe-buffer deadlock that large pickled DataFrames cause.
     DataFrames are built in the main process via build_block_dfs().
     """
-    dm.plot_haplotypes(
-        args, adv_ls, named_f1_dt, chrom, hap_data, colors_dt, truth_df=truth_df,
-    )
+    if hap_data is not None:
+        dm.plot_haplotypes(
+            args, adv_ls, named_f1_dt, chrom, hap_data, colors_dt,
+            truth_df=truth_df,
+        )
+    if hap_data_f1_cross is not None:
+        dm.plot_haplotypes_f1_cross(
+            args, f1_sibling_crosses, chrom, hap_data_f1_cross, colors_dt,
+            truth_df=truth_df,
+        )
     return chrom
 
 
@@ -133,6 +152,7 @@ def main():
 
     parent_dt, cross_ls, named_f1_dt = pm.get_parentage(args)
     adv_ls = pm.get_advanced(named_f1_dt)
+    f1_sibling_crosses = pm.get_f1_sibling_crosses(named_f1_dt)
     sample_ls = pm.get_sample_ls(named_f1_dt)
 
     from cyvcf2 import VCF as _VCF
@@ -156,7 +176,9 @@ def main():
     if args.blockmode and args.assess:
         truth_df = pl.read_csv(args.assess, has_header=True, separator="\t")
 
-    do_block = args.blockmode and not args.wrong_calls and len(adv_ls) > 0
+    do_block          = args.blockmode and not args.wrong_calls and len(adv_ls) > 0
+    do_block_f1_cross = args.blockmode and not args.wrong_calls and len(f1_sibling_crosses) > 0
+    do_any_block      = do_block or do_block_f1_cross
     n_chroms = max(len(chrom_list), 1) if chrom_list else 1
     n_plot_workers = min(args.threads, n_chroms)
 
@@ -181,7 +203,7 @@ def main():
                 vcf_pool.submit(
                     _fetch_and_compute,
                     args.vcf, chrom, sample_ls, sample_idx_in_matrix,
-                    named_f1_dt, adv_ls, args,
+                    named_f1_dt, adv_ls, f1_sibling_crosses, args,
                 ): chrom
                 for chrom in chrom_list
             }
@@ -198,14 +220,14 @@ def main():
                 _accumulate(result, global_mier, global_hom, named_f1_dt,
                             passing_positions, wrong_calls_dfs, args)
 
-                if do_block:
-                    hap_data = result[4]
-                    if hap_data is not None:
-                        hap_data_by_chrom[chrom] = hap_data
+                if do_any_block:
+                    hap_data, hap_data_f1_cross = result[4]
+                    if hap_data is not None or hap_data_f1_cross is not None:
+                        hap_data_by_chrom[chrom] = (hap_data, hap_data_f1_cross)
                         pf = plot_pool.submit(
                             _plot_chrom,
-                            args, adv_ls, named_f1_dt, chrom,
-                            hap_data, colors_dt, truth_df,
+                            args, adv_ls, named_f1_dt, f1_sibling_crosses,
+                            chrom, hap_data, hap_data_f1_cross, colors_dt, truth_df,
                         )
                         plot_futures[pf] = chrom
 
@@ -229,26 +251,27 @@ def main():
 
         plot_futures = {}
         plot_pool_ctx = ProcessPoolExecutor(max_workers=n_plot_workers) \
-                        if do_block else None
+                        if do_any_block else None
 
         try:
             for chrom, pos_arr, gts_matrix in dm.stream_chromosomes(
-                    args.vcf, sample_ls, threads=args.threads):
+                    args.vcf, sample_ls, threads=args.threads,
+                    min_qual=args.quality):
                 result = _compute_chrom(
                     chrom, pos_arr, gts_matrix, sample_idx_in_matrix,
-                    named_f1_dt, adv_ls, args,
+                    named_f1_dt, adv_ls, f1_sibling_crosses, args,
                 )
                 _accumulate(result, global_mier, global_hom, named_f1_dt,
                             passing_positions, wrong_calls_dfs, args)
 
-                if do_block and plot_pool_ctx is not None:
-                    hap_data = result[4]
-                    if hap_data is not None:
-                        hap_data_by_chrom[chrom] = hap_data
+                if do_any_block and plot_pool_ctx is not None:
+                    hap_data, hap_data_f1_cross = result[4]
+                    if hap_data is not None or hap_data_f1_cross is not None:
+                        hap_data_by_chrom[chrom] = (hap_data, hap_data_f1_cross)
                         pf = plot_pool_ctx.submit(
                             _plot_chrom,
-                            args, adv_ls, named_f1_dt, chrom,
-                            hap_data, colors_dt, truth_df,
+                            args, adv_ls, named_f1_dt, f1_sibling_crosses,
+                            chrom, hap_data, hap_data_f1_cross, colors_dt, truth_df,
                         )
                         plot_futures[pf] = chrom
 
@@ -269,17 +292,35 @@ def main():
     # Build smooth/assess DataFrames in main process from stored hap_data.
     # Fast numpy ops — no large data ever crosses the IPC pipe boundary.
     # -----------------------------------------------------------------------
-    if do_block and (args.smooth or args.assess):
-        for chrom, hap_data in hap_data_by_chrom.items():
-            block_df_c, wrong_df_c = dm.build_block_dfs(
-                args, adv_ls, named_f1_dt, chrom, hap_data, truth_df=truth_df,
-            )
-            if block_df_c is not None:
-                out_block_df = pl.concat([out_block_df, block_df_c]) \
-                               if not out_block_df.is_empty() else block_df_c
-            if wrong_df_c is not None:
-                out_wrong_df = pl.concat([out_wrong_df, wrong_df_c]) \
-                               if not out_wrong_df.is_empty() else wrong_df_c
+    out_block_df_f1_cross = pl.DataFrame()
+    out_wrong_df_f1_cross = pl.DataFrame()
+
+    if (do_block or do_block_f1_cross) and (args.smooth or args.assess):
+        for chrom, (hap_data, hap_data_f1_cross) in hap_data_by_chrom.items():
+            if do_block and hap_data is not None:
+                block_df_c, wrong_df_c = dm.build_block_dfs(
+                    args, adv_ls, named_f1_dt, chrom, hap_data, truth_df=truth_df,
+                )
+                if block_df_c is not None:
+                    out_block_df = pl.concat([out_block_df, block_df_c]) \
+                                   if not out_block_df.is_empty() else block_df_c
+                if wrong_df_c is not None:
+                    out_wrong_df = pl.concat([out_wrong_df, wrong_df_c]) \
+                                   if not out_wrong_df.is_empty() else wrong_df_c
+
+            if do_block_f1_cross and hap_data_f1_cross is not None:
+                block_df_c_fc, wrong_df_c_fc = dm.build_block_dfs_f1_cross(
+                    args, f1_sibling_crosses, chrom, hap_data_f1_cross,
+                    truth_df=truth_df,
+                )
+                if block_df_c_fc is not None:
+                    out_block_df_f1_cross = pl.concat(
+                        [out_block_df_f1_cross, block_df_c_fc]) \
+                        if not out_block_df_f1_cross.is_empty() else block_df_c_fc
+                if wrong_df_c_fc is not None:
+                    out_wrong_df_f1_cross = pl.concat(
+                        [out_wrong_df_f1_cross, wrong_df_c_fc]) \
+                        if not out_wrong_df_f1_cross.is_empty() else wrong_df_c_fc
 
     # -----------------------------------------------------------------------
     # Post-processing outputs
@@ -309,6 +350,14 @@ def main():
             separator="\t", include_header=True
         )
 
+    if args.blockmode and args.smooth and not out_block_df_f1_cross.is_empty():
+        f1x_n = len(f1_sibling_crosses)
+        out_block_df_f1_cross.sort(["CHROM", "POS"]).write_csv(
+            os.path.join(args.outdir,
+                         f"{f1x_n}_f1_cross_haplotypes_{args.smooth}_smooth_blocks.tsv"),
+            separator="\t", include_header=True
+        )
+
     if args.blockmode and args.assess and not out_wrong_df.is_empty():
         out_wrong_df = out_wrong_df.filter(
             pl.any_horizontal([pl.col(c).is_not_null() for c in adv_ls])
@@ -316,6 +365,17 @@ def main():
         out_wrong_df.write_csv(
             os.path.join(args.outdir,
                          f"{len(adv_ls)}_haplotypes_assess_blocks.tsv"),
+            separator="\t", include_header=True
+        )
+
+    if args.blockmode and args.assess and not out_wrong_df_f1_cross.is_empty():
+        f1x_children = [d["child"] for d in f1_sibling_crosses]
+        out_wrong_df_f1_cross = out_wrong_df_f1_cross.filter(
+            pl.any_horizontal([pl.col(c).is_not_null() for c in f1x_children])
+        ).sort(["CHROM", "POS"])
+        out_wrong_df_f1_cross.write_csv(
+            os.path.join(args.outdir,
+                         f"{len(f1_sibling_crosses)}_f1_cross_haplotypes_assess_blocks.tsv"),
             separator="\t", include_header=True
         )
 
