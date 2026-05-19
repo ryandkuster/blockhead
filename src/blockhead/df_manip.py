@@ -664,10 +664,10 @@ def median_filter(s, r):
 
     s_arr = np.asarray(s, dtype=np.int32)
 
-    # Prefix sum for O(1) window-sum queries: cum[i+1] - cum[i] = s_arr[i]
-    cum = np.empty(n + 1, dtype=np.int64)
-    cum[0] = 0
-    np.cumsum(s_arr, out=cum[1:])
+    # Prefix sum for O(1) window-sum queries: prefix_sum[i+1] - prefix_sum[i] = s_arr[i]
+    prefix_sum = np.empty(n + 1, dtype=np.int64)
+    prefix_sum[0] = 0
+    np.cumsum(s_arr, out=prefix_sum[1:])
 
     idx = np.arange(n, dtype=np.int64)
 
@@ -687,7 +687,7 @@ def median_filter(s, r):
     begins = np.clip(begins, 0, n).astype(np.int64)
     ends   = np.clip(ends,   0, n).astype(np.int64)
 
-    win_sums  = cum[ends] - cum[begins]
+    win_sums  = prefix_sum[ends] - prefix_sum[begins]
     win_sizes = ends - begins
 
     # majority 2 → 2, majority 0 → 0, tie → keep original
