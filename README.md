@@ -2,6 +2,8 @@
 
 <img src=assets/images/blockhead.png align="left" width="250" alt="Blockhead Logo">
 
+
+
 Blockhead was designed for the analysis of trios in "Benchmarking SNP-Calling Accuracy Against Known Citrus Pedigrees Reveals Pangenome Advantages Over Linear References". It's functionality for calculated vcf-specific trio accuracy using MIER should apply to all datasets with trio data. It's advanced functionality to determine haplotype blocks `blockmode` is currently only available to third generation samples where all first (grandparental) and second generational (F1) lines are included.
 
 If you have any questions on the use of or desired functionality for blockhead, please contact Ryan Kuster (rkuster@utk.edu).
@@ -12,6 +14,13 @@ Install UV for an easy experience:
 
 ```bash
 curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+
+Get a copy of the blockhead repo:
+
+```bash
+git clone https://github.com/ryandkuster/blockhead.git
+cd blockhead
 ```
 
 Run the following while in the blockhead repo to create and activate a virtual environment:
